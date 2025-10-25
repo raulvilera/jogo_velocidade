@@ -3,614 +3,1407 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Missão Cinemática - Jogo Educativo 3D</title>
+    <title>Cinemática 3D - Navegador Espacial</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <style>
+        /* Reset e Estilos Globais */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
-        
+
         body {
-            background: linear-gradient(135deg, #1a2a6c, #2a3a7c, #3a4a8c);
-            color: white;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: #333;
             overflow: hidden;
             height: 100vh;
         }
-        
-        #game-container {
-            width: 100%;
-            height: 100%;
-            position: relative;
-        }
-        
-        #game-canvas {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 1;
-        }
-        
-        #ui-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 2;
-            pointer-events: none;
-        }
-        
-        #header {
-            position: absolute;
-            top: 20px;
-            left: 0;
-            width: 100%;
-            text-align: center;
-            pointer-events: none;
-        }
-        
-        #game-title {
-            font-size: 2.5rem;
-            font-weight: 700;
-            margin-bottom: 10px;
-            color: #6cf;
-            text-shadow: 0 0 10px rgba(0, 150, 255, 0.7);
-        }
-        
-        #game-subtitle {
-            font-size: 1.2rem;
-            opacity: 0.8;
-        }
-        
-        #module-info {
-            position: absolute;
-            top: 120px;
-            left: 20px;
-            background: rgba(0, 30, 60, 0.7);
-            padding: 15px;
-            border-radius: 10px;
-            max-width: 300px;
-            pointer-events: auto;
-            backdrop-filter: blur(5px);
-            border: 1px solid rgba(100, 180, 255, 0.3);
-        }
-        
-        #module-title {
-            font-size: 1.4rem;
-            margin-bottom: 10px;
-            color: #6cf;
-        }
-        
-        #module-description {
-            font-size: 0.9rem;
-            line-height: 1.4;
-            margin-bottom: 15px;
-        }
-        
-        #controls {
-            position: absolute;
-            bottom: 20px;
-            left: 20px;
-            display: flex;
-            gap: 10px;
-            pointer-events: auto;
-        }
-        
-        .btn {
-            background: linear-gradient(to bottom, #3498db, #2980b9);
-            border: none;
+
+        /* Cabeçalho do Jogo */
+        .game-header {
+            background: linear-gradient(90deg, #2c3e50 0%, #34495e 100%);
             color: white;
-            padding: 10px 20px;
-            border-radius: 50px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.3s;
+            padding: 15px 20px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-            pointer-events: auto;
+            z-index: 100;
         }
-        
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.4);
-            background: linear-gradient(to bottom, #3cb0fd, #3498db);
-        }
-        
-        #task-panel {
-            position: absolute;
-            top: 120px;
-            right: 20px;
-            background: rgba(0, 30, 60, 0.7);
-            padding: 20px;
-            border-radius: 10px;
-            max-width: 350px;
-            pointer-events: auto;
-            backdrop-filter: blur(5px);
-            border: 1px solid rgba(100, 180, 255, 0.3);
-        }
-        
-        #task-title {
-            font-size: 1.2rem;
-            margin-bottom: 15px;
-            color: #6cf;
-        }
-        
-        #task-description {
-            font-size: 0.9rem;
-            line-height: 1.4;
-            margin-bottom: 15px;
-        }
-        
-        #task-input {
-            width: 100%;
-            padding: 10px;
-            border-radius: 5px;
-            border: 1px solid #3498db;
-            background: rgba(0, 20, 40, 0.8);
-            color: white;
-            margin-bottom: 10px;
-        }
-        
-        #feedback {
-            position: absolute;
-            bottom: 100px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(0, 40, 80, 0.8);
-            padding: 15px 30px;
-            border-radius: 50px;
-            text-align: center;
-            font-weight: 600;
-            opacity: 0;
-            transition: opacity 0.5s;
-            pointer-events: none;
-            backdrop-filter: blur(5px);
-            border: 1px solid rgba(100, 180, 255, 0.3);
-        }
-        
-        #progress {
-            position: absolute;
-            top: 20px;
-            right: 20px;
+
+        .header-container {
             display: flex;
-            gap: 5px;
+            gap: 30px;
+            align-items: center;
+            max-width: 1400px;
+            margin: 0 auto;
+            flex-wrap: wrap;
         }
-        
-        .progress-dot {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background: rgba(100, 180, 255, 0.3);
-            transition: all 0.3s;
+
+        .header-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
-        
-        .progress-dot.active {
-            background: #6cf;
-            box-shadow: 0 0 10px #6cf;
+
+        .header-item label {
+            font-weight: 600;
+            white-space: nowrap;
         }
-        
-        #concept-panel {
-            position: absolute;
-            bottom: 20px;
-            right: 20px;
-            background: rgba(0, 30, 60, 0.7);
-            padding: 15px;
-            border-radius: 10px;
-            max-width: 300px;
-            pointer-events: auto;
-            backdrop-filter: blur(5px);
-            border: 1px solid rgba(100, 180, 255, 0.3);
+
+        .header-item select,
+        .header-item input {
+            padding: 8px 12px;
+            border: none;
+            border-radius: 4px;
+            font-size: 14px;
+            background: white;
+            color: #333;
+            min-width: 150px;
         }
-        
-        #concept-title {
-            font-size: 1.1rem;
-            margin-bottom: 10px;
-            color: #6cf;
+
+        .header-item input[readonly] {
+            background: #ecf0f1;
+            cursor: not-allowed;
         }
-        
-        #concept-description {
-            font-size: 0.8rem;
-            line-height: 1.4;
+
+        .header-item select:focus,
+        .header-item input:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.3);
         }
-        
-        .formula {
-            font-family: 'Courier New', monospace;
-            background: rgba(0, 20, 40, 0.5);
-            padding: 5px 10px;
-            border-radius: 5px;
-            margin: 5px 0;
-            border-left: 3px solid #6cf;
+
+        #nivel-info {
+            font-size: 16px;
+            font-weight: 600;
+            padding: 8px 16px;
+            background: rgba(52, 152, 219, 0.2);
+            border-radius: 4px;
         }
-        
-        #loading-screen {
-            position: absolute;
-            top: 0;
-            left: 0;
+
+        /* Container Principal */
+        .game-container {
+            display: flex;
+            height: calc(100vh - 70px);
+            gap: 0;
+        }
+
+        /* Canvas 3D */
+        #canvas-container {
+            flex: 1;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        canvas {
+            display: block;
             width: 100%;
             height: 100%;
-            background: linear-gradient(135deg, #1a2a6c, #2a3a7c);
+        }
+
+        /* Painel de Controle */
+        .control-panel {
+            width: 350px;
+            background: white;
+            overflow-y: auto;
+            box-shadow: -4px 0 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            border-left: 4px solid #3498db;
+        }
+
+        .panel-section {
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #ecf0f1;
+        }
+
+        .panel-section:last-child {
+            border-bottom: none;
+        }
+
+        .panel-section h3 {
+            color: #2c3e50;
+            font-size: 16px;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .panel-section p {
+            font-size: 14px;
+            line-height: 1.6;
+            color: #555;
+        }
+
+        /* Campos de Entrada */
+        #input-fields {
             display: flex;
             flex-direction: column;
-            justify-content: center;
+            gap: 12px;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .input-group label {
+            font-weight: 600;
+            font-size: 13px;
+            color: #2c3e50;
+        }
+
+        .input-group input,
+        .input-group select {
+            padding: 10px;
+            border: 1px solid #bdc3c7;
+            border-radius: 4px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        .input-group input:focus,
+        .input-group select:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        }
+
+        /* Feedback */
+        .feedback {
+            padding: 12px;
+            border-radius: 4px;
+            font-weight: 500;
+            text-align: center;
+            min-height: 40px;
+            display: flex;
             align-items: center;
-            z-index: 10;
-            transition: opacity 1s, visibility 1s;
+            justify-content: center;
         }
-        
-        #loading-title {
-            font-size: 3rem;
-            margin-bottom: 20px;
-            color: #6cf;
+
+        .feedback.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
         }
-        
-        #loading-bar-container {
-            width: 300px;
-            height: 10px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 5px;
+
+        .feedback.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .feedback.info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+
+        /* Botões */
+        .btn-primary,
+        .btn-secondary {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            color: white;
+            margin-bottom: 10px;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(52, 152, 219, 0.4);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #95a5a6 0%, #7f8c8d 100%);
+            color: white;
+            margin-bottom: 10px;
+        }
+
+        .btn-secondary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(127, 140, 141, 0.4);
+        }
+
+        .btn-secondary:active {
+            transform: translateY(0);
+        }
+
+        /* Barra de Progresso */
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background: #ecf0f1;
+            border-radius: 10px;
             overflow: hidden;
-            margin-bottom: 20px;
+            margin-bottom: 10px;
         }
-        
-        #loading-bar {
+
+        .progress-fill {
             height: 100%;
+            background: linear-gradient(90deg, #27ae60 0%, #2ecc71 100%);
             width: 0%;
-            background: linear-gradient(90deg, #3498db, #6cf);
-            border-radius: 5px;
             transition: width 0.3s;
         }
-        
-        #loading-text {
-            font-size: 1.2rem;
+
+        #progresso-text {
+            text-align: center;
+            font-weight: 600;
+            color: #27ae60;
         }
-        
-        .animation-container {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 0;
-            overflow: hidden;
+
+        /* Scroll Bar Customizado */
+        .control-panel::-webkit-scrollbar {
+            width: 8px;
         }
-        
-        .floating-object {
-            position: absolute;
-            border-radius: 50%;
-            background: rgba(100, 180, 255, 0.1);
-            animation: float 6s ease-in-out infinite;
+
+        .control-panel::-webkit-scrollbar-track {
+            background: #ecf0f1;
         }
-        
-        @keyframes float {
-            0%, 100% { transform: translateY(0) rotate(0deg); }
-            50% { transform: translateY(-20px) rotate(180deg); }
+
+        .control-panel::-webkit-scrollbar-thumb {
+            background: #bdc3c7;
+            border-radius: 4px;
         }
-        
-        .pulse {
-            animation: pulse 2s infinite;
+
+        .control-panel::-webkit-scrollbar-thumb:hover {
+            background: #95a5a6;
         }
-        
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); opacity: 0.7; }
-            50% { transform: scale(1.1); opacity: 1; }
+
+        /* Responsividade */
+        @media (max-width: 1024px) {
+            .game-container {
+                flex-direction: column;
+            }
+
+            .control-panel {
+                width: 100%;
+                max-height: 300px;
+                border-left: none;
+                border-top: 4px solid #3498db;
+            }
+
+            #canvas-container {
+                flex: 1;
+                min-height: 400px;
+            }
+
+            .header-container {
+                gap: 15px;
+            }
+
+            .header-item {
+                flex: 1;
+                min-width: 150px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .game-header {
+                padding: 10px 15px;
+            }
+
+            .header-container {
+                gap: 10px;
+                justify-content: space-between;
+            }
+
+            .header-item select,
+            .header-item input {
+                min-width: 100px;
+                font-size: 12px;
+            }
+
+            .control-panel {
+                padding: 15px;
+            }
+
+            .panel-section h3 {
+                font-size: 14px;
+            }
+
+            .panel-section p {
+                font-size: 12px;
+            }
+
+            .btn-primary,
+            .btn-secondary {
+                font-size: 12px;
+                padding: 10px;
+            }
         }
     </style>
 </head>
 <body>
-    <div id="loading-screen">
-        <h1 id="loading-title">Missão Cinemática</h1>
-        <div id="loading-bar-container">
-            <div id="loading-bar"></div>
-        </div>
-        <p id="loading-text">Carregando universo educativo...</p>
-    </div>
-    
-    <div class="animation-container" id="background-animation"></div>
-    
-    <div id="game-container">
-        <canvas id="game-canvas"></canvas>
-        
-        <div id="ui-overlay">
-            <div id="header">
-                <h1 id="game-title">Missão Cinemática</h1>
-                <p id="game-subtitle">Explore os conceitos de movimento e velocidade</p>
+    <!-- Cabeçalho do Jogo -->
+    <header class="game-header">
+        <div class="header-container">
+            <div class="header-item">
+                <label for="aluno-select">Aluno:</label>
+                <select id="aluno-select">
+                    <option value="">Selecione um aluno</option>
+                </select>
             </div>
-            
-            <div id="module-info">
-                <h2 id="module-title">Módulo 1: Posição e Referencial</h2>
-                <p id="module-description">Aprenda como a posição de um objeto depende do ponto de referência escolhido.</p>
+            <div class="header-item">
+                <label for="turma-input">Turma:</label>
+                <input type="text" id="turma-input" readonly>
             </div>
-            
-            <div id="task-panel">
-                <h3 id="task-title">Desafio Atual</h3>
-                <p id="task-description">Posicione a vaca a 5 metros da árvore, considerando a árvore como ponto de referência (0m).</p>
-                <input type="text" id="task-input" placeholder="Digite a posição calculada...">
-                <button class="btn" id="submit-btn">Verificar Resposta</button>
+            <div class="header-item">
+                <label for="data-input">Data:</label>
+                <input type="date" id="data-input" readonly>
             </div>
-            
-            <div id="feedback">Resposta Correta! Parabéns!</div>
-            
-            <div id="progress">
-                <div class="progress-dot active"></div>
-                <div class="progress-dot"></div>
-                <div class="progress-dot"></div>
-                <div class="progress-dot"></div>
-                <div class="progress-dot"></div>
-            </div>
-            
-            <div id="concept-panel">
-                <h3 id="concept-title">Fórmulas Importantes</h3>
-                <div class="formula">ΔS = Sf - Si (Deslocamento)</div>
-                <div class="formula">Vm = ΔS / Δt (Velocidade Média)</div>
-                <div class="formula">Distância ≠ Deslocamento</div>
-            </div>
-            
-            <div id="controls">
-                <button class="btn" id="prev-btn">Anterior</button>
-                <button class="btn" id="next-btn">Próximo</button>
-                <button class="btn" id="hint-btn">Dica</button>
-                <button class="btn" id="reset-btn">Reiniciar</button>
+            <div class="header-item">
+                <span id="nivel-info">Nível: 1/10</span>
             </div>
         </div>
-    </div>
+    </header>
+
+    <!-- Container Principal do Jogo -->
+    <main class="game-container">
+        <!-- Canvas 3D -->
+        <div id="canvas-container"></div>
+
+        <!-- Painel de Controle e Informações -->
+        <aside class="control-panel">
+            <div class="panel-section">
+                <h3>Objetivo do Nível</h3>
+                <p id="objetivo-text">Carregando...</p>
+            </div>
+
+            <div class="panel-section">
+                <h3>Instruções</h3>
+                <p id="instrucoes-text">Carregando...</p>
+            </div>
+
+            <div class="panel-section">
+                <h3>Entrada de Dados</h3>
+                <div id="input-fields">
+                    <!-- Campos de entrada dinâmicos serão inseridos aqui -->
+                </div>
+            </div>
+
+            <div class="panel-section">
+                <h3>Feedback</h3>
+                <p id="feedback-text" class="feedback"></p>
+            </div>
+
+            <div class="panel-section">
+                <button id="enviar-resposta" class="btn-primary">Enviar Resposta</button>
+                <button id="proximo-nivel" class="btn-secondary" style="display:none;">Próximo Nível</button>
+                <button id="reiniciar-nivel" class="btn-secondary" style="display:none;">Reiniciar Nível</button>
+            </div>
+
+            <div class="panel-section">
+                <h3>Progresso</h3>
+                <div class="progress-bar">
+                    <div id="progress-fill" class="progress-fill"></div>
+                </div>
+                <p id="progresso-text">0%</p>
+            </div>
+        </aside>
+    </main>
 
     <script>
-        // Dados dos módulos do jogo
-        const modules = [
+        /**
+         * Script para gerenciar os dados dos alunos e preencher o cabeçalho do jogo
+         */
+
+        // Dados dos alunos (será carregado do JSON)
+        let alunosData = [];
+
+        /**
+         * Carrega os dados dos alunos do arquivo JSON
+         */
+        async function carregarAlunos() {
+            try {
+                // Dados dos alunos em formato JSON
+                alunosData = [
+                    {"Nome": "ÁGATHA NIKOLLE DA SILVA RAMOS", "Turma": "9ºA"},
+                    {"Nome": "AMANDA BEATRIZ LEAL MOURAD", "Turma": "9ºA"},
+                    {"Nome": "ANNA NICOLY BENVINDO DOS SANTOS", "Turma": "9ºA"},
+                    {"Nome": "ARTHUR DOS SANTOS", "Turma": "9ºA"},
+                    {"Nome": "BEATRIZ UCHOA DOS SANTOS", "Turma": "9ºA"},
+                    {"Nome": "BRUNO EDUARDO NOGUEIRA DE OLIVEIRA", "Turma": "9ºA"},
+                    {"Nome": "CARLOS EDUARDO BELMIRO DOS SANTOS", "Turma": "9ºA"},
+                    {"Nome": "CHRISTIAN DAVI DE OLIVEIRA", "Turma": "9ºA"},
+                    {"Nome": "FILIPE RODRIGUES SANTOS", "Turma": "9ºA"},
+                    {"Nome": "GABRIEL ALMEIDA MOSCARDINI", "Turma": "9ºA"},
+                    {"Nome": "GIOVANA MOTA VAZ DE JESUS", "Turma": "9ºA"},
+                    {"Nome": "GUILHERME DA SILVA GUIMARÃES", "Turma": "9ºA"},
+                    {"Nome": "HELOÍSA LEAL DOS REIS", "Turma": "9ºA"},
+                    {"Nome": "IAGO ANJOS DE JESUS", "Turma": "9ºA"},
+                    {"Nome": "IGNACIO LINS SANTOS", "Turma": "9ºA"},
+                    {"Nome": "ISADORA DE SOUZA SILVA", "Turma": "9ºA"},
+                    {"Nome": "JOAO VICTOR BATISTA DUARTE", "Turma": "9ºA"},
+                    {"Nome": "JULIANA SANTOS LIMA", "Turma": "9ºA"},
+                    {"Nome": "MANUELA VITÓRIA LIMA DOS SANTOS", "Turma": "9ºA"},
+                    {"Nome": "MIGUEL ALVES OLIVEIRA", "Turma": "9ºA"},
+                    {"Nome": "ORIANA JOSE TUAREZ RENGEL", "Turma": "9ºA"},
+                    {"Nome": "RAFAELLA VITÓRIA EXPEDITA DE ANDRADE MARQUES", "Turma": "9ºA"},
+                    {"Nome": "RAYLAN DE JESUS BARBOSA", "Turma": "9ºA"},
+                    {"Nome": "REBECA DOS SANTOS SOUSA", "Turma": "9ºA"},
+                    {"Nome": "RICHARD JOSÉ DOS SANTOS", "Turma": "9ºA"},
+                    {"Nome": "SARA CRISTINA PASSOS MARTINS", "Turma": "9ºA"},
+                    {"Nome": "VANESSA CARDOSO DOS SANTOS", "Turma": "9ºA"},
+                    {"Nome": "JULIA DIAS AZEVEDO", "Turma": "9ºA"},
+                    {"Nome": "SAMARA HELEN DA SILVA", "Turma": "9ºA"},
+                    {"Nome": "LUIS MATHEUS DA SILVA RAMOS", "Turma": "9ºA"},
+                    {"Nome": "FABIO HENRIQUE DA SILVA", "Turma": "9ºA"},
+                    {"Nome": "SOPHIA MIRELLA BRAGA GARCIA", "Turma": "9ºA"}
+                ];
+                
+                preencherDropdownAlunos();
+                console.log(`${alunosData.length} alunos carregados com sucesso.`);
+            } catch (error) {
+                console.error('Erro ao carregar dados dos alunos:', error);
+                // Fallback: usar dados de exemplo
+                alunosData = [
+                    { Nome: 'ÁGATHA NIKOLLE DA SILVA RAMOS', Turma: '9ºA' },
+                    { Nome: 'AMANDA BEATRIZ LEAL MOURAD', Turma: '9ºA' },
+                    { Nome: 'ANNA NICOLY BENVINDO DOS SANTOS', Turma: '9ºA' },
+                    { Nome: 'ARTHUR DOS SANTOS', Turma: '9ºA' },
+                    { Nome: 'BEATRIZ UCHOA DOS SANTOS', Turma: '9ºA' }
+                ];
+                preencherDropdownAlunos();
+            }
+        }
+
+        /**
+         * Preenche o dropdown de alunos com os dados carregados
+         */
+        function preencherDropdownAlunos() {
+            const selectElement = document.getElementById('aluno-select');
+            selectElement.innerHTML = '<option value="">Selecione um aluno</option>';
+
+            alunosData.forEach((aluno, index) => {
+                const option = document.createElement('option');
+                option.value = index;
+                option.textContent = aluno.Nome;
+                selectElement.appendChild(option);
+            });
+
+            // Adicionar event listener para atualizar turma e data
+            selectElement.addEventListener('change', atualizarTurmaEData);
+        }
+
+        /**
+         * Atualiza o campo de turma e data quando um aluno é selecionado
+         */
+        function atualizarTurmaEData() {
+            const selectElement = document.getElementById('aluno-select');
+            const turmaInput = document.getElementById('turma-input');
+            const dataInput = document.getElementById('data-input');
+
+            if (selectElement.value === '') {
+                turmaInput.value = '';
+                dataInput.value = '';
+            } else {
+                const alunoIndex = parseInt(selectElement.value);
+                const aluno = alunosData[alunoIndex];
+                turmaInput.value = aluno.Turma;
+                
+                // Preencher com a data atual
+                const hoje = new Date();
+                const ano = hoje.getFullYear();
+                const mes = String(hoje.getMonth() + 1).padStart(2, '0');
+                const dia = String(hoje.getDate()).padStart(2, '0');
+                dataInput.value = `${ano}-${mes}-${dia}`;
+            }
+        }
+
+        /**
+         * Retorna os dados do aluno selecionado
+         */
+        function getAlunoSelecionado() {
+            const selectElement = document.getElementById('aluno-select');
+            if (selectElement.value === '') {
+                return null;
+            }
+            const alunoIndex = parseInt(selectElement.value);
+            return alunosData[alunoIndex];
+        }
+
+        /**
+         * Retorna todos os dados dos alunos
+         */
+        function getTodosAlunos() {
+            return alunosData;
+        }
+
+        // Carregar alunos quando a página for carregada
+        document.addEventListener('DOMContentLoaded', carregarAlunos);
+    </script>
+
+    <script>
+        /**
+         * Script principal do jogo "Cinemática 3D - Navegador Espacial"
+         * Gerencia a lógica do jogo, renderização 3D e progressão de níveis
+         */
+
+        // Variáveis globais
+        let scene, camera, renderer;
+        let nivelAtual = 1;
+        let respostaCorreta = false;
+        let pontuacao = 0;
+        let nivelConcluido = false;
+
+        // Definição dos 10 níveis
+        const niveis = [
             {
-                title: "Posição e Referencial",
-                description: "Aprenda como a posição de um objeto depende do ponto de referência escolhido.",
-                task: "Posicione a vaca a 5 metros da árvore, considerando a árvore como ponto de referência (0m).",
-                answer: "5",
-                concept: "A posição de um objeto é sempre relativa a um ponto de referência escolhido."
+                id: 1,
+                titulo: 'Nível 1: Referencial e Repouso/Movimento',
+                objetivo: 'Identificar qual dos três objetos (A, B, C) está em repouso em relação ao referencial móvel (a sonda).',
+                instrucoes: 'Observe os três objetos no espaço. Qual deles está em repouso em relação à sonda? Selecione A, B ou C.',
+                tipo: 'multipla-escolha',
+                opcoes: ['Objeto A', 'Objeto B', 'Objeto C'],
+                respostaCorreta: 1, // Índice da resposta correta
+                descricao: 'Competência BNCC: EF09FI01 - Classificar o estado de movimento ou de repouso, a partir de um dado referencial.'
             },
             {
-                title: "Distância vs Deslocamento",
-                description: "Entenda a diferença entre distância percorrida e deslocamento.",
-                task: "Uma pessoa anda 10m para leste e depois 5m para oeste. Qual é o deslocamento?",
-                answer: "5",
-                concept: "Deslocamento é a diferença entre posição final e inicial, independente do caminho."
+                id: 2,
+                titulo: 'Nível 2: Posição e Referencial',
+                objetivo: 'Ajustar a posição da sonda (Ponto B) em um eixo 3D para que ela esteja a uma distância específica de um Ponto A.',
+                instrucoes: 'Insira as coordenadas (X, Y, Z) para posicionar a sonda a 5 unidades de distância do Ponto A (origem).',
+                tipo: 'coordenadas-3d',
+                coordenadas: { x: 3, y: 4, z: 0 }, // Uma das respostas corretas
+                tolerancia: 0.5,
+                descricao: 'Competência BNCC: EF09FI02 - Diferenciar trajetória, posição, deslocamento e distância.'
             },
             {
-                title: "Velocidade Média",
-                description: "Calcule a velocidade média em diferentes situações.",
-                task: "Um carro percorre 120 km em 2 horas. Qual sua velocidade média em km/h?",
-                answer: "60",
-                concept: "Velocidade média = Variação de posição / Variação de tempo"
+                id: 3,
+                titulo: 'Nível 3: Trajetória vs. Distância',
+                objetivo: 'Guiar a sonda através de um labirinto 3D e calcular a distância total percorrida.',
+                instrucoes: 'Navegue a sonda pelo labirinto. Ao final, calcule a distância total percorrida (em unidades).',
+                tipo: 'calculo-distancia',
+                distanciaCorreta: 25.5,
+                tolerancia: 1.0,
+                descricao: 'Competência BNCC: EF09FI02 - Diferenciar trajetória, posição, deslocamento e distância.'
             },
             {
-                title: "Velocidade Instantânea",
-                description: "Diferencie velocidade instantânea de velocidade média.",
-                task: "Se um objeto tem velocidade instantânea de 20 m/s às 14h, ele percorrerá quantos metros em 5 segundos?",
-                answer: "100",
-                concept: "Velocidade instantânea é a velocidade em um momento específico."
+                id: 4,
+                titulo: 'Nível 4: Deslocamento (Vetorial)',
+                objetivo: 'Calcular o vetor Deslocamento (ΔS) em 3D quando a sonda vai do Ponto A ao Ponto B.',
+                instrucoes: 'A sonda vai de A (0, 0, 0) a B (3, 4, 5). Calcule o deslocamento ΔS = (ΔX, ΔY, ΔZ).',
+                tipo: 'deslocamento-3d',
+                deslocamento: { x: 3, y: 4, z: 5 },
+                tolerancia: 0.5,
+                descricao: 'Competência BNCC: EF09FI02 - Diferenciar trajetória, posição, deslocamento e distância.'
             },
             {
-                title: "Aplicação com GPS",
-                description: "Aplique os conceitos em situações reais com GPS.",
-                task: "Um GPS indica 3km até o destino. Esta medida representa distância ou deslocamento?",
-                answer: "deslocamento",
-                concept: "GPS geralmente indica deslocamento (em linha reta) até o destino."
+                id: 5,
+                titulo: 'Nível 5: Distância vs. Deslocamento',
+                objetivo: 'Diferenciar Distância Total Percorrida e Deslocamento quando a sonda faz um percurso de ida e volta.',
+                instrucoes: 'A sonda vai de A a B (10 km) e volta a A. Calcule: (1) Distância Total Percorrida, (2) Deslocamento.',
+                tipo: 'distancia-vs-deslocamento',
+                distanciaTotal: 20,
+                deslocamento: 0,
+                tolerancia: 0.5,
+                descricao: 'Competência BNCC: EF09FI02 - Diferenciar trajetória, posição, deslocamento e distância.'
+            },
+            {
+                id: 6,
+                titulo: 'Nível 6: Velocidade Média (Cálculo)',
+                objetivo: 'Calcular a Velocidade Média (Vm = ΔS/Δt) e escolher a rota correta.',
+                instrucoes: 'A sonda percorre 100 km em 2 horas. Calcule a Velocidade Média em km/h.',
+                tipo: 'velocidade-media',
+                velocidadeCorreta: 50,
+                tolerancia: 1,
+                descricao: 'Competência BNCC: EF09FI03 - Reconhecer as características que definem o movimento retilíneo uniforme e variado.'
+            },
+            {
+                id: 7,
+                titulo: 'Nível 7: Unidades de Medida',
+                objetivo: 'Converter a Velocidade Média de km/h para m/s.',
+                instrucoes: 'Converta 36 km/h para m/s. (Dica: divida por 3,6)',
+                tipo: 'conversao-unidades',
+                velocidadeCorreta: 10,
+                tolerancia: 0.5,
+                descricao: 'Competência BNCC: EF09FI03 - Reconhecer as características que definem o movimento retilíneo uniforme e variado.'
+            },
+            {
+                id: 8,
+                titulo: 'Nível 8: Movimento Retilíneo Uniforme (MRU)',
+                objetivo: 'Prever a Posição Final da sonda em MRU usando S = S0 + V*t.',
+                instrucoes: 'A sonda está em S0 = 10 m, com velocidade V = 5 m/s. Qual será sua posição após t = 3 segundos?',
+                tipo: 'posicao-final',
+                posicaoCorreta: 25,
+                tolerancia: 0.5,
+                descricao: 'Competência BNCC: EF09FI03 - Reconhecer as características que definem o movimento retilíneo uniforme e variado.'
+            },
+            {
+                id: 9,
+                titulo: 'Nível 9: Velocidade Instantânea',
+                objetivo: 'Identificar o momento de maior/menor velocidade instantânea.',
+                instrucoes: 'Observe a sonda passando por 5 pontos. Em qual ponto a velocidade instantânea é máxima?',
+                tipo: 'velocidade-instantanea',
+                pontoCorreto: 3, // Índice do ponto (0-4)
+                opcoes: ['Ponto 1', 'Ponto 2', 'Ponto 3', 'Ponto 4', 'Ponto 5'],
+                descricao: 'Competência BNCC: EF09FI04 - Aplicar as equações horárias relacionadas ao movimento.'
+            },
+            {
+                id: 10,
+                titulo: 'Nível 10: Aplicação Integrada',
+                objetivo: 'Calcular a Velocidade Média Total de um percurso dividido em dois trechos.',
+                instrucoes: 'Trecho 1: 100 km em 1 hora. Trecho 2: 120 km em 1 hora. Qual é a Vm total?',
+                tipo: 'velocidade-media-total',
+                velocidadeCorreta: 110,
+                tolerancia: 1,
+                descricao: 'Competência BNCC: EF09FI04 - Aplicar as equações horárias relacionadas ao movimento.'
             }
         ];
 
-        // Estado do jogo
-        let currentModule = 0;
+        /**
+         * Inicializa a cena 3D com Three.js
+         */
+        function inicializarCena3D() {
+            const container = document.getElementById('canvas-container');
 
-        // Simula carregamento
-        function simulateLoading() {
-            let progress = 0;
-            const loadingBar = document.getElementById('loading-bar');
-            const loadingScreen = document.getElementById('loading-screen');
-            const loadingText = document.getElementById('loading-text');
-            
-            const interval = setInterval(() => {
-                progress += Math.random() * 15;
-                if (progress >= 100) {
-                    progress = 100;
-                    clearInterval(interval);
-                    
-                    setTimeout(() => {
-                        loadingScreen.style.opacity = '0';
-                        setTimeout(() => {
-                            loadingScreen.style.display = 'none';
-                            initGame();
-                        }, 1000);
-                    }, 500);
-                }
-                
-                loadingBar.style.width = `${progress}%`;
-                
-                // Atualiza texto de carregamento
-                if (progress < 30) {
-                    loadingText.textContent = "Inicializando ambiente...";
-                } else if (progress < 60) {
-                    loadingText.textContent = "Carregando modelos...";
-                } else if (progress < 90) {
-                    loadingText.textContent = "Preparando desafios...";
-                } else {
-                    loadingText.textContent = "Quase pronto!";
-                }
-            }, 300);
+            // Criar cena
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0x667eea);
+
+            // Criar câmera
+            const width = container.clientWidth;
+            const height = container.clientHeight;
+            camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000);
+            camera.position.set(0, 5, 10);
+            camera.lookAt(0, 0, 0);
+
+            // Criar renderer
+            renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setSize(width, height);
+            renderer.shadowMap.enabled = true;
+            container.appendChild(renderer.domElement);
+
+            // Adicionar iluminação
+            const luz = new THREE.DirectionalLight(0xffffff, 1);
+            luz.position.set(5, 10, 7);
+            luz.castShadow = true;
+            scene.add(luz);
+
+            const luzAmbiente = new THREE.AmbientLight(0xffffff, 0.5);
+            scene.add(luzAmbiente);
+
+            // Adicionar grid de referência
+            const gridHelper = new THREE.GridHelper(20, 20, 0x888888, 0xcccccc);
+            scene.add(gridHelper);
+
+            // Adicionar eixos de referência
+            const axesHelper = new THREE.AxesHelper(5);
+            scene.add(axesHelper);
+
+            // Inicializar o primeiro nível
+            carregarNivel(nivelAtual);
+
+            // Animar cena
+            animate();
+
+            // Adicionar event listener para redimensionar
+            window.addEventListener('resize', onWindowResize);
         }
 
-        // Inicializa o jogo
-        function initGame() {
-            createBackgroundAnimation();
-            updateUI();
-            setupEventListeners();
+        /**
+         * Carrega o nível especificado
+         */
+        function carregarNivel(numeroNivel) {
+            // Limpar cena
+            while (scene.children.length > 0) {
+                scene.remove(scene.children[0]);
+            }
+
+            // Re-adicionar elementos básicos
+            const luz = new THREE.DirectionalLight(0xffffff, 1);
+            luz.position.set(5, 10, 7);
+            luz.castShadow = true;
+            scene.add(luz);
+
+            const luzAmbiente = new THREE.AmbientLight(0xffffff, 0.5);
+            scene.add(luzAmbiente);
+
+            const gridHelper = new THREE.GridHelper(20, 20, 0x888888, 0xcccccc);
+            scene.add(gridHelper);
+
+            const axesHelper = new THREE.AxesHelper(5);
+            scene.add(axesHelper);
+
+            // Obter dados do nível
+            const nivel = niveis[numeroNivel - 1];
+            nivelAtual = numeroNivel;
+            respostaCorreta = false;
+            nivelConcluido = false;
+
+            // Atualizar interface
+            document.getElementById('nivel-info').textContent = `Nível: ${numeroNivel}/10`;
+            document.getElementById('objetivo-text').textContent = nivel.objetivo;
+            document.getElementById('instrucoes-text').textContent = nivel.instrucoes;
+            document.getElementById('feedback-text').textContent = '';
+            document.getElementById('feedback-text').className = 'feedback';
+
+            // Mostrar/ocultar botões
+            document.getElementById('enviar-resposta').style.display = 'block';
+            document.getElementById('proximo-nivel').style.display = 'none';
+            document.getElementById('reiniciar-nivel').style.display = 'none';
+
+            // Atualizar barra de progresso
+            const progresso = (numeroNivel / 10) * 100;
+            document.getElementById('progress-fill').style.width = progresso + '%';
+            document.getElementById('progresso-text').textContent = Math.round(progresso) + '%';
+
+            // Criar campos de entrada específicos do nível
+            criarCamposEntrada(nivel);
+
+            // Criar objetos 3D específicos do nível
+            criarObjetosDonivel(nivel);
         }
 
-        // Cria animação de fundo
-        function createBackgroundAnimation() {
-            const container = document.getElementById('background-animation');
-            const colors = ['rgba(100, 180, 255, 0.1)', 'rgba(100, 200, 255, 0.15)', 'rgba(150, 220, 255, 0.1)'];
-            
-            for (let i = 0; i < 15; i++) {
-                const element = document.createElement('div');
-                element.classList.add('floating-object');
-                
-                // Posição e tamanho aleatórios
-                const size = Math.random() * 100 + 50;
-                const left = Math.random() * 100;
-                const top = Math.random() * 100;
-                const color = colors[Math.floor(Math.random() * colors.length)];
-                const delay = Math.random() * 5;
-                
-                element.style.width = `${size}px`;
-                element.style.height = `${size}px`;
-                element.style.left = `${left}%`;
-                element.style.top = `${top}%`;
-                element.style.background = color;
-                element.style.animationDelay = `${delay}s`;
-                
-                container.appendChild(element);
+        /**
+         * Cria os campos de entrada de dados específicos de cada nível
+         */
+        function criarCamposEntrada(nivel) {
+            const inputFields = document.getElementById('input-fields');
+            inputFields.innerHTML = '';
+
+            switch (nivel.tipo) {
+                case 'multipla-escolha':
+                    nivel.opcoes.forEach((opcao, index) => {
+                        const div = document.createElement('div');
+                        div.className = 'input-group';
+                        div.innerHTML = `
+                            <label>
+                                <input type="radio" name="resposta" value="${index}"> ${opcao}
+                            </label>
+                        `;
+                        inputFields.appendChild(div);
+                    });
+                    break;
+
+                case 'coordenadas-3d':
+                    const coordDiv = document.createElement('div');
+                    coordDiv.className = 'input-group';
+                    coordDiv.innerHTML = `
+                        <label>Coordenada X:</label>
+                        <input type="number" id="coord-x" placeholder="Ex: 3" step="0.1">
+                        <label>Coordenada Y:</label>
+                        <input type="number" id="coord-y" placeholder="Ex: 4" step="0.1">
+                        <label>Coordenada Z:</label>
+                        <input type="number" id="coord-z" placeholder="Ex: 0" step="0.1">
+                    `;
+                    inputFields.appendChild(coordDiv);
+                    break;
+
+                case 'calculo-distancia':
+                case 'velocidade-media':
+                case 'conversao-unidades':
+                case 'posicao-final':
+                case 'velocidade-media-total':
+                    const calcDiv = document.createElement('div');
+                    calcDiv.className = 'input-group';
+                    calcDiv.innerHTML = `
+                        <label>${nivel.tipo === 'calculo-distancia' ? 'Distância Total (unidades):' : 
+                                nivel.tipo === 'velocidade-media' ? 'Velocidade Média (km/h):' :
+                                nivel.tipo === 'conversao-unidades' ? 'Velocidade (m/s):' :
+                                nivel.tipo === 'posicao-final' ? 'Posição Final (m):' :
+                                'Velocidade Média Total (km/h):'}</label>
+                        <input type="number" id="resposta-valor" placeholder="Insira o valor" step="0.1">
+                    `;
+                    inputFields.appendChild(calcDiv);
+                    break;
+
+                case 'deslocamento-3d':
+                    const deslDiv = document.createElement('div');
+                    deslDiv.className = 'input-group';
+                    deslDiv.innerHTML = `
+                        <label>Deslocamento ΔX:</label>
+                        <input type="number" id="desl-x" placeholder="Ex: 3" step="0.1">
+                        <label>Deslocamento ΔY:</label>
+                        <input type="number" id="desl-y" placeholder="Ex: 4" step="0.1">
+                        <label>Deslocamento ΔZ:</label>
+                        <input type="number" id="desl-z" placeholder="Ex: 5" step="0.1">
+                    `;
+                    inputFields.appendChild(deslDiv);
+                    break;
+
+                case 'distancia-vs-deslocamento':
+                    const dvdDiv = document.createElement('div');
+                    dvdDiv.className = 'input-group';
+                    dvdDiv.innerHTML = `
+                        <label>Distância Total Percorrida (km):</label>
+                        <input type="number" id="distancia-total" placeholder="Ex: 20" step="0.1">
+                        <label>Deslocamento (km):</label>
+                        <input type="number" id="deslocamento-valor" placeholder="Ex: 0" step="0.1">
+                    `;
+                    inputFields.appendChild(dvdDiv);
+                    break;
+
+                case 'velocidade-instantanea':
+                    nivel.opcoes.forEach((opcao, index) => {
+                        const div = document.createElement('div');
+                        div.className = 'input-group';
+                        div.innerHTML = `
+                            <label>
+                                <input type="radio" name="resposta" value="${index}"> ${opcao}
+                            </label>
+                        `;
+                        inputFields.appendChild(div);
+                    });
+                    break;
             }
         }
 
-        // Atualiza a interface do usuário
-        function updateUI() {
-            document.getElementById('module-title').textContent = `Módulo ${currentModule + 1}: ${modules[currentModule].title}`;
-            document.getElementById('module-description').textContent = modules[currentModule].description;
-            document.getElementById('task-title').textContent = 'Desafio ' + (currentModule + 1);
-            document.getElementById('task-description').textContent = modules[currentModule].task;
-            document.getElementById('concept-description').textContent = modules[currentModule].concept;
-            
-            // Atualiza os pontos de progresso
-            const progressDots = document.querySelectorAll('.progress-dot');
-            progressDots.forEach((dot, index) => {
-                if (index === currentModule) {
-                    dot.classList.add('active');
-                } else {
-                    dot.classList.remove('active');
-                }
+        /**
+         * Cria os objetos 3D específicos de cada nível
+         */
+        function criarObjetosDonivel(nivel) {
+            switch (nivel.id) {
+                case 1:
+                    criarNivel1();
+                    break;
+                case 2:
+                    criarNivel2();
+                    break;
+                case 3:
+                    criarNivel3();
+                    break;
+                case 4:
+                    criarNivel4();
+                    break;
+                case 5:
+                    criarNivel5();
+                    break;
+                case 6:
+                    criarNivel6();
+                    break;
+                case 7:
+                    criarNivel7();
+                    break;
+                case 8:
+                    criarNivel8();
+                    break;
+                case 9:
+                    criarNivel9();
+                    break;
+                case 10:
+                    criarNivel10();
+                    break;
+            }
+        }
+
+        /**
+         * Nível 1: Referencial e Repouso/Movimento
+         */
+        function criarNivel1() {
+            // Sonda (referencial móvel)
+            const sondaGeometry = new THREE.SphereGeometry(0.5, 32, 32);
+            const sondaMaterial = new THREE.MeshStandardMaterial({ color: 0xff6b6b });
+            const sonda = new THREE.Mesh(sondaGeometry, sondaMaterial);
+            sonda.position.set(0, 0, 0);
+            sonda.castShadow = true;
+            scene.add(sonda);
+
+            // Objeto A (em repouso em relação à sonda)
+            const objAGeometry = new THREE.BoxGeometry(0.5, 0.5, 0.5);
+            const objAMaterial = new THREE.MeshStandardMaterial({ color: 0x4ecdc4 });
+            const objA = new THREE.Mesh(objAGeometry, objAMaterial);
+            objA.position.set(3, 0, 0);
+            objA.castShadow = true;
+            scene.add(objA);
+
+            // Objeto B (em movimento)
+            const objBGeometry = new THREE.BoxGeometry(0.5, 0.5, 0.5);
+            const objBMaterial = new THREE.MeshStandardMaterial({ color: 0xffe66d });
+            const objB = new THREE.Mesh(objBGeometry, objBMaterial);
+            objB.position.set(-3, 0, 0);
+            objB.castShadow = true;
+            scene.add(objB);
+
+            // Objeto C (em movimento)
+            const objCGeometry = new THREE.BoxGeometry(0.5, 0.5, 0.5);
+            const objCMaterial = new THREE.MeshStandardMaterial({ color: 0x95e1d3 });
+            const objC = new THREE.Mesh(objCGeometry, objCMaterial);
+            objC.position.set(0, 3, 0);
+            objC.castShadow = true;
+            scene.add(objC);
+
+            // Animar objetos B e C
+            let animationFrame = 0;
+            const originalAnimate = animate;
+            animate = function() {
+                animationFrame++;
+                objB.position.x = -3 + Math.sin(animationFrame * 0.01) * 2;
+                objC.position.y = 3 + Math.cos(animationFrame * 0.01) * 1.5;
+                originalAnimate();
+            };
+        }
+
+        /**
+         * Nível 2: Posição e Referencial
+         */
+        function criarNivel2() {
+            // Ponto A (origem)
+            const pontoAGeometry = new THREE.SphereGeometry(0.3, 32, 32);
+            const pontoAMaterial = new THREE.MeshStandardMaterial({ color: 0xff6b6b });
+            const pontoA = new THREE.Mesh(pontoAGeometry, pontoAMaterial);
+            pontoA.position.set(0, 0, 0);
+            pontoA.castShadow = true;
+            scene.add(pontoA);
+
+            // Esfera de referência (raio de 5 unidades)
+            const esferaGeometry = new THREE.SphereGeometry(5, 32, 32);
+            const esferaMaterial = new THREE.MeshStandardMaterial({ 
+                color: 0x3498db, 
+                wireframe: true, 
+                transparent: true, 
+                opacity: 0.3 
             });
-            
-            // Limpa o campo de entrada
-            document.getElementById('task-input').value = '';
+            const esfera = new THREE.Mesh(esferaGeometry, esferaMaterial);
+            scene.add(esfera);
+
+            // Ponto B (será ajustado pelo jogador)
+            const pontoBGeometry = new THREE.SphereGeometry(0.3, 32, 32);
+            const pontoBMaterial = new THREE.MeshStandardMaterial({ color: 0x4ecdc4 });
+            const pontoB = new THREE.Mesh(pontoBGeometry, pontoBMaterial);
+            pontoB.position.set(3, 4, 0);
+            pontoB.castShadow = true;
+            scene.add(pontoB);
         }
 
-        // Mostra feedback
-        function showFeedback(message, isSuccess) {
-            const feedback = document.getElementById('feedback');
-            feedback.textContent = message;
-            feedback.style.background = isSuccess 
-                ? 'rgba(40, 180, 100, 0.8)' 
-                : 'rgba(180, 40, 40, 0.8)';
-            feedback.style.opacity = 1;
-            
-            // Adiciona efeito visual para resposta correta
-            if (isSuccess) {
-                createCelebrationEffects();
-            }
-            
-            setTimeout(() => {
-                feedback.style.opacity = 0;
-            }, 3000);
-        }
-
-        // Cria efeitos de celebração
-        function createCelebrationEffects() {
-            const container = document.getElementById('background-animation');
-            
-            for (let i = 0; i < 20; i++) {
-                const element = document.createElement('div');
-                element.classList.add('floating-object', 'pulse');
-                
-                // Posição e tamanho aleatórios
-                const size = Math.random() * 30 + 10;
-                const left = Math.random() * 100;
-                const top = Math.random() * 100;
-                const hue = Math.random() * 360;
-                
-                element.style.width = `${size}px`;
-                element.style.height = `${size}px`;
-                element.style.left = `${left}%`;
-                element.style.top = `${top}%`;
-                element.style.background = `hsla(${hue}, 100%, 70%, 0.7)`;
-                element.style.animationDuration = '1s';
-                
-                container.appendChild(element);
-                
-                // Remove após a animação
-                setTimeout(() => {
-                    element.remove();
-                }, 2000);
-            }
-        }
-
-        // Verifica a resposta
-        function checkAnswer() {
-            const userAnswer = document.getElementById('task-input').value.trim().toLowerCase();
-            const correctAnswer = modules[currentModule].answer.toLowerCase();
-            
-            if (userAnswer === correctAnswer) {
-                showFeedback('Resposta Correta! Parabéns!', true);
-                
-                // Avança para o próximo módulo após um breve delay
-                setTimeout(() => {
-                    if (currentModule < modules.length - 1) {
-                        currentModule++;
-                        updateUI();
-                    } else {
-                        showFeedback('Parabéns! Você completou todos os módulos!', true);
-                    }
-                }, 1500);
-            } else {
-                showFeedback('Resposta Incorreta. Tente novamente!', false);
-            }
-        }
-
-        // Fornece uma dica
-        function provideHint() {
-            const hints = [
-                "Lembre-se: a posição é sempre relativa a um ponto de referência.",
-                "Deslocamento = Posição Final - Posição Inicial",
-                "Velocidade Média = Distância Percorrida / Tempo Gasto",
-                "Velocidade instantânea é a velocidade em um momento específico.",
-                "GPS geralmente mostra o deslocamento em linha reta até o destino."
+        /**
+         * Nível 3: Trajetória vs. Distância
+         */
+        function criarNivel3() {
+            // Criar um labirinto simples com caixas
+            const paredes = [
+                { pos: [0, 0, -5], scale: [10, 0.5, 1] },
+                { pos: [5, 0, 0], scale: [1, 0.5, 10] },
+                { pos: [-5, 0, 0], scale: [1, 0.5, 10] },
+                { pos: [0, 0, 5], scale: [10, 0.5, 1] },
+                { pos: [2, 0, -2], scale: [1, 0.5, 3] },
+                { pos: [-2, 0, 2], scale: [3, 0.5, 1] }
             ];
-            
-            showFeedback(`Dica: ${hints[currentModule]}`, false);
+
+            paredes.forEach(parede => {
+                const geometry = new THREE.BoxGeometry(...parede.scale);
+                const material = new THREE.MeshStandardMaterial({ color: 0x95a5a6 });
+                const mesh = new THREE.Mesh(geometry, material);
+                mesh.position.set(...parede.pos);
+                mesh.castShadow = true;
+                scene.add(mesh);
+            });
+
+            // Ponto inicial
+            const inicioGeometry = new THREE.SphereGeometry(0.3, 32, 32);
+            const inicioMaterial = new THREE.MeshStandardMaterial({ color: 0x2ecc71 });
+            const inicio = new THREE.Mesh(inicioGeometry, inicioMaterial);
+            inicio.position.set(-4, 0.5, -4);
+            scene.add(inicio);
+
+            // Ponto final
+            const fimGeometry = new THREE.SphereGeometry(0.3, 32, 32);
+            const fimMaterial = new THREE.MeshStandardMaterial({ color: 0xe74c3c });
+            const fim = new THREE.Mesh(fimGeometry, fimMaterial);
+            fim.position.set(4, 0.5, 4);
+            scene.add(fim);
         }
 
-        // Configura os event listeners
-        function setupEventListeners() {
-            document.getElementById('prev-btn').addEventListener('click', () => {
-                if (currentModule > 0) {
-                    currentModule--;
-                    updateUI();
-                }
-            });
-            
-            document.getElementById('next-btn').addEventListener('click', () => {
-                if (currentModule < modules.length - 1) {
-                    currentModule++;
-                    updateUI();
-                }
-            });
-            
-            document.getElementById('submit-btn').addEventListener('click', checkAnswer);
-            
-            document.getElementById('hint-btn').addEventListener('click', provideHint);
-            
-            document.getElementById('reset-btn').addEventListener('click', () => {
-                currentModule = 0;
-                updateUI();
-            });
-            
-            document.getElementById('task-input').addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') {
-                    checkAnswer();
-                }
-            });
+        /**
+         * Nível 4: Deslocamento (Vetorial)
+         */
+        function criarNivel4() {
+            // Ponto A
+            const pontoAGeometry = new THREE.SphereGeometry(0.3, 32, 32);
+            const pontoAMaterial = new THREE.MeshStandardMaterial({ color: 0x2ecc71 });
+            const pontoA = new THREE.Mesh(pontoAGeometry, pontoAMaterial);
+            pontoA.position.set(0, 0, 0);
+            scene.add(pontoA);
+
+            // Ponto B
+            const pontoBGeometry = new THREE.SphereGeometry(0.3, 32, 32);
+            const pontoBMaterial = new THREE.MeshStandardMaterial({ color: 0xe74c3c });
+            const pontoB = new THREE.Mesh(pontoBGeometry, pontoBMaterial);
+            pontoB.position.set(3, 4, 5);
+            scene.add(pontoB);
+
+            // Linha conectando A a B (vetor deslocamento)
+            const lineGeometry = new THREE.BufferGeometry();
+            lineGeometry.setAttribute('position', new THREE.BufferAttribute(
+                new Float32Array([0, 0, 0, 3, 4, 5]),
+                3
+            ));
+            const lineMaterial = new THREE.LineBasicMaterial({ color: 0x3498db, linewidth: 2 });
+            const line = new THREE.Line(lineGeometry, lineMaterial);
+            scene.add(line);
         }
 
-        // Inicia o carregamento quando a página estiver pronta
-        document.addEventListener('DOMContentLoaded', simulateLoading);
+        /**
+         * Nível 5: Distância vs. Deslocamento
+         */
+        function criarNivel5() {
+            // Ponto A
+            const pontoAGeometry = new THREE.SphereGeometry(0.3, 32, 32);
+            const pontoAMaterial = new THREE.MeshStandardMaterial({ color: 0x2ecc71 });
+            const pontoA = new THREE.Mesh(pontoAGeometry, pontoAMaterial);
+            pontoA.position.set(0, 0, 0);
+            scene.add(pontoA);
+
+            // Ponto B
+            const pontoBGeometry = new THREE.SphereGeometry(0.3, 32, 32);
+            const pontoBMaterial = new THREE.MeshStandardMaterial({ color: 0xe74c3c });
+            const pontoB = new THREE.Mesh(pontoBGeometry, pontoBMaterial);
+            pontoB.position.set(10, 0, 0);
+            scene.add(pontoB);
+
+            // Caminho de ida e volta
+            const caminhoGeometry = new THREE.BufferGeometry();
+            caminhoGeometry.setAttribute('position', new THREE.BufferAttribute(
+                new Float32Array([0, 0, 0, 10, 0, 0, 0, 0, 0]),
+                3
+            ));
+            const caminhoMaterial = new THREE.LineBasicMaterial({ color: 0xf39c12, linewidth: 2 });
+            const caminho = new THREE.Line(caminhoGeometry, caminhoMaterial);
+            scene.add(caminho);
+        }
+
+        /**
+         * Nível 6: Velocidade Média (Cálculo)
+         */
+        function criarNivel6() {
+            // Ponto inicial
+            const inicioGeometry = new THREE.SphereGeometry(0.3, 32, 32);
+            const inicioMaterial = new THREE.MeshStandardMaterial({ color: 0x2ecc71 });
+            const inicio = new THREE.Mesh(inicioGeometry, inicioMaterial);
+            inicio.position.set(-5, 0, 0);
+            scene.add(inicio);
+
+            // Ponto final
+            const fimGeometry = new THREE.SphereGeometry(0.3, 32, 32);
+            const fimMaterial = new THREE.MeshStandardMaterial({ color: 0xe74c3c });
+            const fim = new THREE.Mesh(fimGeometry, fimMaterial);
+            fim.position.set(5, 0, 0);
+            scene.add(fim);
+
+            // Caminho
+            const caminhoGeometry = new THREE.BufferGeometry();
+            caminhoGeometry.setAttribute('position', new THREE.BufferAttribute(
+                new Float32Array([-5, 0, 0, 5, 0, 0]),
+                3
+            ));
+            const caminhoMaterial = new THREE.LineBasicMaterial({ color: 0x3498db, linewidth: 2 });
+            const caminho = new THREE.Line(caminhoGeometry, caminhoMaterial);
+            scene.add(caminho);
+        }
+
+        /**
+         * Nível 7: Unidades de Medida
+         */
+        function criarNivel7() {
+            // Similar ao nível 6, mas com foco em conversão
+            const inicioGeometry = new THREE.SphereGeometry(0.3, 32, 32);
+            const inicioMaterial = new THREE.MeshStandardMaterial({ color: 0x2ecc71 });
+            const inicio = new THREE.Mesh(inicioGeometry, inicioMaterial);
+            inicio.position.set(-5, 0, 0);
+            scene.add(inicio);
+
+            const fimGeometry = new THREE.SphereGeometry(0.3, 32, 32);
+            const fimMaterial = new THREE.MeshStandardMaterial({ color: 0xe74c3c });
+            const fim = new THREE.Mesh(fimGeometry, fimMaterial);
+            fim.position.set(5, 0, 0);
+            scene.add(fim);
+
+            const caminhoGeometry = new THREE.BufferGeometry();
+            caminhoGeometry.setAttribute('position', new THREE.BufferAttribute(
+                new Float32Array([-5, 0, 0, 5, 0, 0]),
+                3
+            ));
+            const caminhoMaterial = new THREE.LineBasicMaterial({ color: 0x3498db, linewidth: 2 });
+            const caminho = new THREE.Line(caminhoGeometry, caminhoMaterial);
+            scene.add(caminho);
+        }
+
+        /**
+         * Nível 8: Movimento Retilíneo Uniforme (MRU)
+         */
+        function criarNivel8() {
+            // Ponto inicial (S0 = 10m)
+            const inicioGeometry = new THREE.SphereGeometry(0.3, 32, 32);
+            const inicioMaterial = new THREE.MeshStandardMaterial({ color: 0x2ecc71 });
+            const inicio = new THREE.Mesh(inicioGeometry, inicioMaterial);
+            inicio.position.set(2, 0, 0);
+            scene.add(inicio);
+
+            // Eixo de movimento
+            const eixoGeometry = new THREE.BufferGeometry();
+            eixoGeometry.setAttribute('position', new THREE.BufferAttribute(
+                new Float32Array([-5, 0, 0, 5, 0, 0]),
+                3
+            ));
+            const eixoMaterial = new THREE.LineBasicMaterial({ color: 0x95a5a6, linewidth: 1 });
+            const eixo = new THREE.Line(eixoGeometry, eixoMaterial);
+            scene.add(eixo);
+
+            // Marcas de distância
+            for (let i = -5; i <= 5; i += 1) {
+                const marcaGeometry = new THREE.BoxGeometry(0.1, 0.2, 0.1);
+                const marcaMaterial = new THREE.MeshStandardMaterial({ color: 0xbdc3c7 });
+                const marca = new THREE.Mesh(marcaGeometry, marcaMaterial);
+                marca.position.set(i, -0.5, 0);
+                scene.add(marca);
+            }
+        }
+
+        /**
+         * Nível 9: Velocidade Instantânea
+         */
+        function criarNivel9() {
+            // Criar 5 pontos ao longo de um caminho
+            const pontos = [
+                { pos: [-4, 0, 0], vel: 1 },
+                { pos: [-2, 0, 0], vel: 2 },
+                { pos: [0, 0, 0], vel: 3 },
+                { pos: [2, 0, 0], vel: 2 },
+                { pos: [4, 0, 0], vel: 1 }
+            ];
+
+            pontos.forEach((ponto, index) => {
+                const geometry = new THREE.SphereGeometry(0.3, 32, 32);
+                const material = new THREE.MeshStandardMaterial({ color: 0x3498db });
+                const mesh = new THREE.Mesh(geometry, material);
+                mesh.position.set(...ponto.pos);
+                mesh.userData.velocidade = ponto.vel;
+                mesh.userData.indice = index;
+                scene.add(mesh);
+            });
+
+            // Caminho
+            const caminhoGeometry = new THREE.BufferGeometry();
+            const posicoes = [];
+            pontos.forEach(p => posicoes.push(...p.pos));
+            caminhoGeometry.setAttribute('position', new THREE.BufferAttribute(
+                new Float32Array(posicoes),
+                3
+            ));
+            const caminhoMaterial = new THREE.LineBasicMaterial({ color: 0x95a5a6, linewidth: 2 });
+            const caminho = new THREE.Line(caminhoGeometry, caminhoMaterial);
+            scene.add(caminho);
+        }
+
+        /**
+         * Nível 10: Aplicação Integrada
+         */
+        function criarNivel10() {
+            // Trecho 1
+            const trecho1InicioGeometry = new THREE.SphereGeometry(0.3, 32, 32);
+            const trecho1InicioMaterial = new THREE.MeshStandardMaterial({ color: 0x2ecc71 });
+            const trecho1Inicio = new THREE.Mesh(trecho1InicioGeometry, trecho1InicioMaterial);
+            trecho1Inicio.position.set(-5, 0, 0);
+            scene.add(trecho1Inicio);
+
+            // Trecho 1 fim / Trecho 2 início
+            const meioPontoGeometry = new THREE.SphereGeometry(0.3, 32, 32);
+            const meioPontoMaterial = new THREE.MeshStandardMaterial({ color: 0xf39c12 });
+            const meioPonto = new THREE.Mesh(meioPontoGeometry, meioPontoMaterial);
+            meioPonto.position.set(0, 0, 0);
+            scene.add(meioPonto);
+
+            // Trecho 2 fim
+            const trecho2FimGeometry = new THREE.SphereGeometry(0.3, 32, 32);
+            const trecho2FimMaterial = new THREE.MeshStandardMaterial({ color: 0xe74c3c });
+            const trecho2Fim = new THREE.Mesh(trecho2FimGeometry, trecho2FimMaterial);
+            trecho2Fim.position.set(6, 0, 0);
+            scene.add(trecho2Fim);
+
+            // Caminhos
+            const trecho1Geometry = new THREE.BufferGeometry();
+            trecho1Geometry.setAttribute('position', new THREE.BufferAttribute(
+                new Float32Array([-5, 0, 0, 0, 0, 0]),
+                3
+            ));
+            const trecho1Material = new THREE.LineBasicMaterial({ color: 0x3498db, linewidth: 2 });
+            const trecho1 = new THREE.Line(trecho1Geometry, trecho1Material);
+            scene.add(trecho1);
+
+            const trecho2Geometry = new THREE.BufferGeometry();
+            trecho2Geometry.setAttribute('position', new THREE.BufferAttribute(
+                new Float32Array([0, 0, 0, 6, 0, 0]),
+                3
+            ));
+            const trecho2Material = new THREE.LineBasicMaterial({ color: 0x9b59b6, linewidth: 2 });
+            const trecho2 = new THREE.Line(trecho2Geometry, trecho2Material);
+            scene.add(trecho2);
+        }
+
+        /**
+         * Valida a resposta do jogador e fornece feedback
+         */
+        function validarResposta() {
+            const nivel = niveis[nivelAtual - 1];
+            const feedbackElement = document.getElementById('feedback-text');
+            let resposta = null;
+            let acertou = false;
+
+            switch (nivel.tipo) {
+                case 'multipla-escolha':
+                case 'velocidade-instantanea':
+                    const radioSelecionado = document.querySelector('input[name="resposta"]:checked');
+                    if (!radioSelecionado) {
+                        feedbackElement.textContent = 'Por favor, selecione uma opção.';
+                        feedbackElement.className = 'feedback error';
+                        return;
+                    }
+                    resposta = parseInt(radioSelecionado.value);
+                    acertou = resposta === nivel.respostaCorreta || resposta === nivel.pontoCorreto;
+                    break;
+
+                case 'coordenadas-3d':
+                    const x = parseFloat(document.getElementById('coord-x').value);
+                    const y = parseFloat(document.getElementById('coord-y').value);
+                    const z = parseFloat(document.getElementById('coord-z').value);
+                    if (isNaN(x) || isNaN(y) || isNaN(z)) {
+                        feedbackElement.textContent = 'Por favor, insira valores válidos para X, Y e Z.';
+                        feedbackElement.className = 'feedback error';
+                        return;
+                    }
+                    const distancia = Math.sqrt(x * x + y * y + z * z);
+                    acertou = Math.abs(distancia - 5) <= nivel.tolerancia;
+                    resposta = { x, y, z, distancia };
+                    break;
+
+                case 'calculo-distancia':
+                case 'velocidade-media':
+                case 'conversao-unidades':
+                case 'posicao-final':
+                case 'velocidade-media-total':
+                    const valor = parseFloat(document.getElementById('resposta-valor').value);
+                    if (isNaN(valor)) {
+                        feedbackElement.textContent = 'Por favor, insira um valor válido.';
+                        feedbackElement.className = 'feedback error';
+                        return;
+                    }
+                    const valorCorreto = nivel.tipo === 'calculo-distancia' ? nivel.distanciaCorreta :
+                                          nivel.tipo === 'velocidade-media' ? nivel.velocidadeCorreta :
+                                          nivel.tipo === 'conversao-unidades' ? nivel.velocidadeCorreta :
+                                          nivel.tipo === 'posicao-final' ? nivel.posicaoCorreta :
+                                          nivel.velocidadeCorreta;
+                    acertou = Math.abs(valor - valorCorreto) <= nivel.tolerancia;
+                    resposta = valor;
+                    break;
+
+                case 'deslocamento-3d':
+                    const dx = parseFloat(document.getElementById('desl-x').value);
+                    const dy = parseFloat(document.getElementById('desl-y').value);
+                    const dz = parseFloat(document.getElementById('desl-z').value);
+                    if (isNaN(dx) || isNaN(dy) || isNaN(dz)) {
+                        feedbackElement.textContent = 'Por favor, insira valores válidos para ΔX, ΔY e ΔZ.';
+                        feedbackElement.className = 'feedback error';
+                        return;
+                    }
+                    acertou = Math.abs(dx - nivel.deslocamento.x) <= nivel.tolerancia &&
+                              Math.abs(dy - nivel.deslocamento.y) <= nivel.tolerancia &&
+                              Math.abs(dz - nivel.deslocamento.z) <= nivel.tolerancia;
+                    resposta = { dx, dy, dz };
+                    break;
+
+                case 'distancia-vs-deslocamento':
+                    const distTotal = parseFloat(document.getElementById('distancia-total').value);
+                    const desl = parseFloat(document.getElementById('deslocamento-valor').value);
+                    if (isNaN(distTotal) || isNaN(desl)) {
+                        feedbackElement.textContent = 'Por favor, insira valores válidos.';
+                        feedbackElement.className = 'feedback error';
+                        return;
+                    }
+                    acertou = Math.abs(distTotal - nivel.distanciaTotal) <= nivel.tolerancia &&
+                              Math.abs(desl - nivel.deslocamento) <= nivel.tolerancia;
+                    resposta = { distTotal, desl };
+                    break;
+            }
+
+            // Fornecer feedback
+            if (acertou) {
+                feedbackElement.textContent = '✓ Resposta correta! Parabéns!';
+                feedbackElement.className = 'feedback success';
+                nivelConcluido = true;
+                pontuacao += 10;
+
+                // Mostrar botão de próximo nível
+                document.getElementById('enviar-resposta').style.display = 'none';
+                if (nivelAtual < 10) {
+                    document.getElementById('proximo-nivel').style.display = 'block';
+                } else {
+                    document.getElementById('proximo-nivel').textContent = 'Jogo Concluído!';
+                    document.getElementById('proximo-nivel').style.display = 'block';
+                }
+            } else {
+                feedbackElement.textContent = '✗ Resposta incorreta. Tente novamente!';
+                feedbackElement.className = 'feedback error';
+                document.getElementById('reiniciar-nivel').style.display = 'block';
+            }
+        }
+
+        /**
+         * Avança para o próximo nível
+         */
+        function proximoNivel() {
+            if (nivelAtual < 10) {
+                carregarNivel(nivelAtual + 1);
+            } else {
+                // Jogo concluído
+                alert(`Parabéns! Você completou o jogo! Pontuação final: ${pontuacao}`);
+                carregarNivel(1);
+            }
+        }
+
+        /**
+         * Reinicia o nível atual
+         */
+        function reiniciarNivel() {
+            carregarNivel(nivelAtual);
+        }
+
+        /**
+         * Anima a cena
+         */
+        function animate() {
+            requestAnimationFrame(animate);
+            renderer.render(scene, camera);
+        }
+
+        /**
+         * Redimensiona a janela
+         */
+        function onWindowResize() {
+            const container = document.getElementById('canvas-container');
+            const width = container.clientWidth;
+            const height = container.clientHeight;
+
+            camera.aspect = width / height;
+            camera.updateProjectionMatrix();
+
+            renderer.setSize(width, height);
+        }
+
+        // Event listeners
+        document.addEventListener('DOMContentLoaded', () => {
+            inicializarCena3D();
+
+            document.getElementById('enviar-resposta').addEventListener('click', validarResposta);
+            document.getElementById('proximo-nivel').addEventListener('click', proximoNivel);
+            document.getElementById('reiniciar-nivel').addEventListener('click', reiniciarNivel);
+        });
     </script>
 </body>
 </html>
