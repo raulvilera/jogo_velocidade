@@ -3,10 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Missão Cinemática - Jogo Educativo 3D Animado</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+    <title>Missão Cinemática - Jogo Educativo 3D</title>
     <style>
         * {
             margin: 0;
@@ -54,29 +51,14 @@
             width: 100%;
             text-align: center;
             pointer-events: none;
-            animation: float 3s ease-in-out infinite;
-        }
-        
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
         }
         
         #game-title {
             font-size: 2.5rem;
             font-weight: 700;
-            text-shadow: 0 0 10px rgba(0, 150, 255, 0.7);
             margin-bottom: 10px;
-            background: linear-gradient(90deg, #6cf, #9df, #6cf);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-size: 200% auto;
-            animation: shimmer 3s infinite linear;
-        }
-        
-        @keyframes shimmer {
-            0% { background-position: 0% center; }
-            100% { background-position: 200% center; }
+            color: #6cf;
+            text-shadow: 0 0 10px rgba(0, 150, 255, 0.7);
         }
         
         #game-subtitle {
@@ -95,13 +77,6 @@
             pointer-events: auto;
             backdrop-filter: blur(5px);
             border: 1px solid rgba(100, 180, 255, 0.3);
-            transform: translateX(-100%);
-            animation: slideInLeft 0.5s forwards 0.5s;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-        }
-        
-        @keyframes slideInLeft {
-            to { transform: translateX(0); }
         }
         
         #module-title {
@@ -123,42 +98,19 @@
             display: flex;
             gap: 10px;
             pointer-events: auto;
-            transform: translateY(100%);
-            animation: slideInUp 0.5s forwards 0.7s;
-        }
-        
-        @keyframes slideInUp {
-            to { transform: translateY(0); }
         }
         
         .btn {
             background: linear-gradient(to bottom, #3498db, #2980b9);
             border: none;
             color: white;
-            padding: 12px 24px;
+            padding: 10px 20px;
             border-radius: 50px;
             cursor: pointer;
             font-weight: 600;
             transition: all 0.3s;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
             pointer-events: auto;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .btn::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-            transition: left 0.5s;
-        }
-        
-        .btn:hover::after {
-            left: 100%;
         }
         
         .btn:hover {
@@ -178,13 +130,6 @@
             pointer-events: auto;
             backdrop-filter: blur(5px);
             border: 1px solid rgba(100, 180, 255, 0.3);
-            transform: translateX(100%);
-            animation: slideInRight 0.5s forwards 0.5s;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-        }
-        
-        @keyframes slideInRight {
-            to { transform: translateX(0); }
         }
         
         #task-title {
@@ -207,13 +152,6 @@
             background: rgba(0, 20, 40, 0.8);
             color: white;
             margin-bottom: 10px;
-            transition: all 0.3s;
-        }
-        
-        #task-input:focus {
-            outline: none;
-            border-color: #6cf;
-            box-shadow: 0 0 10px rgba(100, 180, 255, 0.5);
         }
         
         #feedback {
@@ -231,7 +169,6 @@
             pointer-events: none;
             backdrop-filter: blur(5px);
             border: 1px solid rgba(100, 180, 255, 0.3);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
         }
         
         #progress {
@@ -240,12 +177,6 @@
             right: 20px;
             display: flex;
             gap: 5px;
-            transform: translateY(-100%);
-            animation: slideInDown 0.5s forwards 0.7s;
-        }
-        
-        @keyframes slideInDown {
-            to { transform: translateY(0); }
         }
         
         .progress-dot {
@@ -254,18 +185,11 @@
             border-radius: 50%;
             background: rgba(100, 180, 255, 0.3);
             transition: all 0.3s;
-            position: relative;
         }
         
         .progress-dot.active {
             background: #6cf;
             box-shadow: 0 0 10px #6cf;
-            animation: pulse 2s infinite;
-        }
-        
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.2); }
         }
         
         #concept-panel {
@@ -279,9 +203,6 @@
             pointer-events: auto;
             backdrop-filter: blur(5px);
             border: 1px solid rgba(100, 180, 255, 0.3);
-            transform: translateY(100%);
-            animation: slideInUp 0.5s forwards 0.7s;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
         }
         
         #concept-title {
@@ -302,19 +223,6 @@
             border-radius: 5px;
             margin: 5px 0;
             border-left: 3px solid #6cf;
-            transition: all 0.3s;
-        }
-        
-        .formula:hover {
-            transform: translateX(5px);
-            background: rgba(0, 30, 60, 0.7);
-        }
-        
-        #particles-js {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            z-index: 0;
         }
         
         #loading-screen {
@@ -335,11 +243,7 @@
         #loading-title {
             font-size: 3rem;
             margin-bottom: 20px;
-            background: linear-gradient(90deg, #6cf, #9df, #6cf);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-size: 200% auto;
-            animation: shimmer 2s infinite linear;
+            color: #6cf;
         }
         
         #loading-bar-container {
@@ -363,35 +267,35 @@
             font-size: 1.2rem;
         }
         
-        .floating-element {
-            animation: float 3s ease-in-out infinite;
+        .animation-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            overflow: hidden;
         }
         
-        .bounce {
-            animation: bounce 2s infinite;
+        .floating-object {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(100, 180, 255, 0.1);
+            animation: float 6s ease-in-out infinite;
         }
         
-        @keyframes bounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(180deg); }
         }
         
-        .rotate {
-            animation: rotate 10s infinite linear;
+        .pulse {
+            animation: pulse 2s infinite;
         }
         
-        @keyframes rotate {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
-        
-        .pulse-glow {
-            animation: pulse-glow 2s infinite alternate;
-        }
-        
-        @keyframes pulse-glow {
-            from { box-shadow: 0 0 5px rgba(100, 180, 255, 0.5); }
-            to { box-shadow: 0 0 20px rgba(100, 180, 255, 0.8); }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.7; }
+            50% { transform: scale(1.1); opacity: 1; }
         }
     </style>
 </head>
@@ -404,9 +308,10 @@
         <p id="loading-text">Carregando universo educativo...</p>
     </div>
     
+    <div class="animation-container" id="background-animation"></div>
+    
     <div id="game-container">
-        <div id="particles-js"></div>
-        <div id="game-canvas"></div>
+        <canvas id="game-canvas"></canvas>
         
         <div id="ui-overlay">
             <div id="header">
@@ -416,7 +321,7 @@
             
             <div id="module-info">
                 <h2 id="module-title">Módulo 1: Posição e Referencial</h2>
-                <p id="module-description">Aprenda como a posição de um objeto depende do ponto de referência escolhido. Arraste os objetos na cena e observe como suas posições mudam com diferentes referenciais.</p>
+                <p id="module-description">Aprenda como a posição de um objeto depende do ponto de referência escolhido.</p>
             </div>
             
             <div id="task-panel">
@@ -452,15 +357,7 @@
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
     <script>
-        // Configuração básica da cena Three.js
-        let scene, camera, renderer, controls;
-        let objects = [];
-        let currentModule = 0;
-        let animationMixers = [];
-        let clock = new THREE.Clock();
-        
         // Dados dos módulos do jogo
         const modules = [
             {
@@ -499,83 +396,11 @@
                 concept: "GPS geralmente indica deslocamento (em linha reta) até o destino."
             }
         ];
-        
-        // Inicialização do Three.js
-        function init() {
-            // Cria a cena
-            scene = new THREE.Scene();
-            scene.background = new THREE.Color(0x1a2a6c);
-            
-            // Cria a câmera
-            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-            camera.position.set(0, 10, 15);
-            
-            // Cria o renderizador
-            renderer = new THREE.WebGLRenderer({ antialias: true });
-            renderer.setSize(window.innerWidth, window.innerHeight);
-            renderer.shadowMap.enabled = true;
-            renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-            document.getElementById('game-canvas').appendChild(renderer.domElement);
-            
-            // Adiciona controles de órbita
-            controls = new THREE.OrbitControls(camera, renderer.domElement);
-            controls.enableDamping = true;
-            controls.dampingFactor = 0.05;
-            
-            // Adiciona iluminação
-            const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
-            scene.add(ambientLight);
-            
-            const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
-            directionalLight.position.set(10, 20, 15);
-            directionalLight.castShadow = true;
-            directionalLight.shadow.mapSize.width = 2048;
-            directionalLight.shadow.mapSize.height = 2048;
-            scene.add(directionalLight);
-            
-            // Adiciona luz de preenchimento
-            const fillLight = new THREE.DirectionalLight(0x7fbfff, 0.3);
-            fillLight.position.set(-10, 10, -10);
-            scene.add(fillLight);
-            
-            // Cria o chão
-            const floorGeometry = new THREE.PlaneGeometry(30, 30);
-            const floorMaterial = new THREE.MeshStandardMaterial({ 
-                color: 0x2a5c2a, 
-                roughness: 0.8,
-                metalness: 0.2
-            });
-            const floor = new THREE.Mesh(floorGeometry, floorMaterial);
-            floor.rotation.x = -Math.PI / 2;
-            floor.receiveShadow = true;
-            scene.add(floor);
-            
-            // Adiciona uma grade para referência
-            const gridHelper = new THREE.GridHelper(30, 30, 0xffffff, 0xffffff);
-            gridHelper.material.opacity = 0.2;
-            gridHelper.material.transparent = true;
-            scene.add(gridHelper);
-            
-            // Cria objetos da cena (exemplo simplificado)
-            createSceneObjects();
-            
-            // Inicializa a interface
-            updateUI();
-            
-            // Inicia a animação
-            animate();
-            
-            // Configura eventos de redimensionamento
-            window.addEventListener('resize', onWindowResize);
-            
-            // Inicializa partículas
-            initParticles();
-            
-            // Simula carregamento
-            simulateLoading();
-        }
-        
-        // Simula tela de carregamento
+
+        // Estado do jogo
+        let currentModule = 0;
+
+        // Simula carregamento
         function simulateLoading() {
             let progress = 0;
             const loadingBar = document.getElementById('loading-bar');
@@ -583,7 +408,7 @@
             const loadingText = document.getElementById('loading-text');
             
             const interval = setInterval(() => {
-                progress += Math.random() * 10;
+                progress += Math.random() * 15;
                 if (progress >= 100) {
                     progress = 100;
                     clearInterval(interval);
@@ -591,7 +416,8 @@
                     setTimeout(() => {
                         loadingScreen.style.opacity = '0';
                         setTimeout(() => {
-                            loadingScreen.style.visibility = 'hidden';
+                            loadingScreen.style.display = 'none';
+                            initGame();
                         }, 1000);
                     }, 500);
                 }
@@ -600,289 +426,54 @@
                 
                 // Atualiza texto de carregamento
                 if (progress < 30) {
-                    loadingText.textContent = "Inicializando ambiente 3D...";
+                    loadingText.textContent = "Inicializando ambiente...";
                 } else if (progress < 60) {
-                    loadingText.textContent = "Carregando modelos educativos...";
+                    loadingText.textContent = "Carregando modelos...";
                 } else if (progress < 90) {
-                    loadingText.textContent = "Preparando desafios interativos...";
+                    loadingText.textContent = "Preparando desafios...";
                 } else {
-                    loadingText.textContent = "Quase pronto! Iniciando missão...";
+                    loadingText.textContent = "Quase pronto!";
                 }
-            }, 200);
+            }, 300);
         }
-        
-        // Inicializa partículas de fundo
-        function initParticles() {
-            particlesJS('particles-js', {
-                particles: {
-                    number: { value: 80, density: { enable: true, value_area: 800 } },
-                    color: { value: "#6cf" },
-                    shape: { type: "circle" },
-                    opacity: {
-                        value: 0.5,
-                        random: true,
-                        anim: { enable: true, speed: 1, opacity_min: 0.1, sync: false }
-                    },
-                    size: {
-                        value: 3,
-                        random: true,
-                        anim: { enable: true, speed: 2, size_min: 0.1, sync: false }
-                    },
-                    line_linked: {
-                        enable: true,
-                        distance: 150,
-                        color: "#6cf",
-                        opacity: 0.2,
-                        width: 1
-                    },
-                    move: {
-                        enable: true,
-                        speed: 1,
-                        direction: "none",
-                        random: true,
-                        straight: false,
-                        out_mode: "out",
-                        bounce: false,
-                        attract: { enable: false, rotateX: 600, rotateY: 1200 }
-                    }
-                },
-                interactivity: {
-                    detect_on: "canvas",
-                    events: {
-                        onhover: { enable: true, mode: "repulse" },
-                        onclick: { enable: true, mode: "push" },
-                        resize: true
-                    }
-                },
-                retina_detect: true
-            });
+
+        // Inicializa o jogo
+        function initGame() {
+            createBackgroundAnimation();
+            updateUI();
+            setupEventListeners();
         }
-        
-        // Cria objetos na cena com animações
-        function createSceneObjects() {
-            // Árvore animada
-            const treeTrunkGeometry = new THREE.CylinderGeometry(0.3, 0.4, 2, 8);
-            const treeTrunkMaterial = new THREE.MeshStandardMaterial({ color: 0x8B4513 });
-            const treeTrunk = new THREE.Mesh(treeTrunkGeometry, treeTrunkMaterial);
-            treeTrunk.position.set(-5, 1, 0);
-            treeTrunk.castShadow = true;
-            scene.add(treeTrunk);
+
+        // Cria animação de fundo
+        function createBackgroundAnimation() {
+            const container = document.getElementById('background-animation');
+            const colors = ['rgba(100, 180, 255, 0.1)', 'rgba(100, 200, 255, 0.15)', 'rgba(150, 220, 255, 0.1)'];
             
-            const treeTopGeometry = new THREE.SphereGeometry(1.5, 8, 6);
-            const treeTopMaterial = new THREE.MeshStandardMaterial({ color: 0x2E8B57 });
-            const treeTop = new THREE.Mesh(treeTopGeometry, treeTopMaterial);
-            treeTop.position.set(-5, 3, 0);
-            treeTop.castShadow = true;
-            scene.add(treeTop);
-            
-            // Anima a árvore
-            animateTree(treeTop);
-            
-            // Casa animada
-            const houseGeometry = new THREE.BoxGeometry(2, 2, 2);
-            const houseMaterial = new THREE.MeshStandardMaterial({ color: 0xC14444 });
-            const house = new THREE.Mesh(houseGeometry, houseMaterial);
-            house.position.set(5, 1, 0);
-            house.castShadow = true;
-            scene.add(house);
-            
-            // Anima a casa
-            animateHouse(house);
-            
-            // Vaca animada (simplificada)
-            const cowGroup = new THREE.Group();
-            cowGroup.position.set(0, 0, 0);
-            
-            const cowBodyGeometry = new THREE.SphereGeometry(0.8, 8, 8);
-            const cowBodyMaterial = new THREE.MeshStandardMaterial({ color: 0xFFFFFF });
-            const cowBody = new THREE.Mesh(cowBodyGeometry, cowBodyMaterial);
-            cowBody.position.set(0, 0.8, 0);
-            cowBody.castShadow = true;
-            cowGroup.add(cowBody);
-            
-            const cowHeadGeometry = new THREE.SphereGeometry(0.5, 8, 8);
-            const cowHeadMaterial = new THREE.MeshStandardMaterial({ color: 0xFFFFFF });
-            const cowHead = new THREE.Mesh(cowHeadGeometry, cowHeadMaterial);
-            cowHead.position.set(0.8, 1.2, 0);
-            cowHead.castShadow = true;
-            cowGroup.add(cowHead);
-            
-            // Pernas da vaca
-            for (let i = 0; i < 4; i++) {
-                const legGeometry = new THREE.CylinderGeometry(0.1, 0.1, 0.8, 8);
-                const legMaterial = new THREE.MeshStandardMaterial({ color: 0xFFFFFF });
-                const leg = new THREE.Mesh(legGeometry, legMaterial);
+            for (let i = 0; i < 15; i++) {
+                const element = document.createElement('div');
+                element.classList.add('floating-object');
                 
-                const xPos = i % 2 === 0 ? -0.4 : 0.4;
-                const zPos = i < 2 ? -0.4 : 0.4;
+                // Posição e tamanho aleatórios
+                const size = Math.random() * 100 + 50;
+                const left = Math.random() * 100;
+                const top = Math.random() * 100;
+                const color = colors[Math.floor(Math.random() * colors.length)];
+                const delay = Math.random() * 5;
                 
-                leg.position.set(xPos, 0.4, zPos);
-                leg.castShadow = true;
-                cowGroup.add(leg);
+                element.style.width = `${size}px`;
+                element.style.height = `${size}px`;
+                element.style.left = `${left}%`;
+                element.style.top = `${top}%`;
+                element.style.background = color;
+                element.style.animationDelay = `${delay}s`;
+                
+                container.appendChild(element);
             }
-            
-            scene.add(cowGroup);
-            
-            // Anima a vaca
-            animateCow(cowGroup);
-            
-            // Adiciona eixos de coordenadas animados
-            const axesHelper = new THREE.AxesHelper(5);
-            scene.add(axesHelper);
-            
-            // Adiciona partículas flutuantes
-            createFloatingParticles();
-            
-            // Adiciona sol
-            const sunGeometry = new THREE.SphereGeometry(1, 16, 16);
-            const sunMaterial = new THREE.MeshBasicMaterial({ 
-                color: 0xffff00,
-                emissive: 0xffff00,
-                emissiveIntensity: 0.5
-            });
-            const sun = new THREE.Mesh(sunGeometry, sunMaterial);
-            sun.position.set(10, 10, 10);
-            scene.add(sun);
-            
-            // Anima o sol
-            animateSun(sun);
         }
-        
-        // Anima a árvore
-        function animateTree(treeTop) {
-            let scale = 1;
-            let growing = true;
-            
-            function animate() {
-                if (growing) {
-                    scale += 0.005;
-                    if (scale >= 1.1) growing = false;
-                } else {
-                    scale -= 0.005;
-                    if (scale <= 0.9) growing = true;
-                }
-                
-                treeTop.scale.set(scale, scale, scale);
-                requestAnimationFrame(animate);
-            }
-            
-            animate();
-        }
-        
-        // Anima a casa
-        function animateHouse(house) {
-            let rotation = 0;
-            
-            function animate() {
-                rotation += 0.001;
-                house.rotation.y = rotation;
-                requestAnimationFrame(animate);
-            }
-            
-            animate();
-        }
-        
-        // Anima a vaca
-        function animateCow(cowGroup) {
-            let moveDirection = 1;
-            let legRotation = 0;
-            
-            function animate() {
-                // Movimento de vai e vem
-                cowGroup.position.x += 0.01 * moveDirection;
-                if (cowGroup.position.x > 3 || cowGroup.position.x < -3) {
-                    moveDirection *= -1;
-                    cowGroup.rotation.y += Math.PI;
-                }
-                
-                // Animação das pernas
-                legRotation += 0.1;
-                cowGroup.children.forEach((child, index) => {
-                    if (index >= 2) { // As pernas são os índices 2, 3, 4, 5
-                        child.rotation.x = Math.sin(legRotation + index) * 0.5;
-                    }
-                });
-                
-                // Balanço suave do corpo
-                cowGroup.position.y = Math.sin(legRotation * 2) * 0.1;
-                
-                requestAnimationFrame(animate);
-            }
-            
-            animate();
-        }
-        
-        // Anima o sol
-        function animateSun(sun) {
-            let angle = 0;
-            
-            function animate() {
-                angle += 0.002;
-                sun.position.x = 15 * Math.cos(angle);
-                sun.position.z = 15 * Math.sin(angle);
-                requestAnimationFrame(animate);
-            }
-            
-            animate();
-        }
-        
-        // Cria partículas flutuantes
-        function createFloatingParticles() {
-            const particleCount = 50;
-            const particles = new THREE.BufferGeometry();
-            const positions = new Float32Array(particleCount * 3);
-            const colors = new Float32Array(particleCount * 3);
-            
-            for (let i = 0; i < particleCount * 3; i += 3) {
-                positions[i] = (Math.random() - 0.5) * 20;
-                positions[i + 1] = Math.random() * 10;
-                positions[i + 2] = (Math.random() - 0.5) * 20;
-                
-                colors[i] = Math.random();
-                colors[i + 1] = Math.random();
-                colors[i + 2] = Math.random();
-            }
-            
-            particles.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-            particles.setAttribute('color', new THREE.BufferAttribute(colors, 3));
-            
-            const particleMaterial = new THREE.PointsMaterial({
-                size: 0.1,
-                vertexColors: true,
-                transparent: true,
-                opacity: 0.6
-            });
-            
-            const particleSystem = new THREE.Points(particles, particleMaterial);
-            scene.add(particleSystem);
-            
-            // Anima as partículas
-            animateParticles(particleSystem);
-        }
-        
-        // Anima as partículas
-        function animateParticles(particleSystem) {
-            const positions = particleSystem.geometry.attributes.position.array;
-            
-            function animate() {
-                for (let i = 0; i < positions.length; i += 3) {
-                    positions[i + 1] += 0.01;
-                    if (positions[i + 1] > 10) {
-                        positions[i + 1] = 0;
-                    }
-                }
-                
-                particleSystem.geometry.attributes.position.needsUpdate = true;
-                particleSystem.rotation.y += 0.001;
-                requestAnimationFrame(animate);
-            }
-            
-            animate();
-        }
-        
+
         // Atualiza a interface do usuário
         function updateUI() {
-            document.getElementById('module-title').textContent = modules[currentModule].title;
+            document.getElementById('module-title').textContent = `Módulo ${currentModule + 1}: ${modules[currentModule].title}`;
             document.getElementById('module-description').textContent = modules[currentModule].description;
             document.getElementById('task-title').textContent = 'Desafio ' + (currentModule + 1);
             document.getElementById('task-description').textContent = modules[currentModule].task;
@@ -900,94 +491,57 @@
             
             // Limpa o campo de entrada
             document.getElementById('task-input').value = '';
-            
-            // Efeito de transição
-            document.querySelectorAll('#module-info, #task-panel, #concept-panel').forEach(el => {
-                el.style.animation = 'none';
-                setTimeout(() => {
-                    el.style.animation = '';
-                }, 10);
-            });
         }
-        
-        // Mostra feedback com animação
+
+        // Mostra feedback
         function showFeedback(message, isSuccess) {
             const feedback = document.getElementById('feedback');
             feedback.textContent = message;
             feedback.style.background = isSuccess 
                 ? 'rgba(40, 180, 100, 0.8)' 
                 : 'rgba(180, 40, 40, 0.8)';
-            
-            // Animação de entrada
             feedback.style.opacity = 1;
-            feedback.style.transform = 'translateX(-50%) scale(1)';
             
-            // Efeito de partículas para resposta correta
+            // Adiciona efeito visual para resposta correta
             if (isSuccess) {
-                createCelebrationParticles();
+                createCelebrationEffects();
             }
             
             setTimeout(() => {
                 feedback.style.opacity = 0;
-                feedback.style.transform = 'translateX(-50%) scale(0.9)';
             }, 3000);
         }
-        
-        // Cria partículas de celebração
-        function createCelebrationParticles() {
-            const particleCount = 30;
-            const particles = [];
+
+        // Cria efeitos de celebração
+        function createCelebrationEffects() {
+            const container = document.getElementById('background-animation');
             
-            for (let i = 0; i < particleCount; i++) {
-                const geometry = new THREE.SphereGeometry(0.1, 8, 8);
-                const material = new THREE.MeshBasicMaterial({ 
-                    color: new THREE.Color().setHSL(Math.random(), 1, 0.5)
-                });
-                const particle = new THREE.Mesh(geometry, material);
+            for (let i = 0; i < 20; i++) {
+                const element = document.createElement('div');
+                element.classList.add('floating-object', 'pulse');
                 
-                particle.position.set(
-                    (Math.random() - 0.5) * 5,
-                    (Math.random() - 0.5) * 5,
-                    (Math.random() - 0.5) * 5
-                );
+                // Posição e tamanho aleatórios
+                const size = Math.random() * 30 + 10;
+                const left = Math.random() * 100;
+                const top = Math.random() * 100;
+                const hue = Math.random() * 360;
                 
-                particle.velocity = new THREE.Vector3(
-                    (Math.random() - 0.5) * 0.1,
-                    Math.random() * 0.1,
-                    (Math.random() - 0.5) * 0.1
-                );
+                element.style.width = `${size}px`;
+                element.style.height = `${size}px`;
+                element.style.left = `${left}%`;
+                element.style.top = `${top}%`;
+                element.style.background = `hsla(${hue}, 100%, 70%, 0.7)`;
+                element.style.animationDuration = '1s';
                 
-                scene.add(particle);
-                particles.push(particle);
+                container.appendChild(element);
+                
+                // Remove após a animação
+                setTimeout(() => {
+                    element.remove();
+                }, 2000);
             }
-            
-            // Anima as partículas
-            function animateParticles() {
-                let allGone = true;
-                
-                particles.forEach(particle => {
-                    particle.position.add(particle.velocity);
-                    particle.velocity.y -= 0.005; // gravidade
-                    particle.material.opacity -= 0.01;
-                    
-                    if (particle.material.opacity > 0) {
-                        allGone = false;
-                    } else {
-                        scene.remove(particle);
-                    }
-                });
-                
-                if (!allGone) {
-                    requestAnimationFrame(animateParticles);
-                } else {
-                    // Limpa o array
-                    particles.length = 0;
-                }
-            }
-            
-            animateParticles();
         }
-        
+
         // Verifica a resposta
         function checkAnswer() {
             const userAnswer = document.getElementById('task-input').value.trim().toLowerCase();
@@ -1009,7 +563,7 @@
                 showFeedback('Resposta Incorreta. Tente novamente!', false);
             }
         }
-        
+
         // Fornece uma dica
         function provideHint() {
             const hints = [
@@ -1022,58 +576,41 @@
             
             showFeedback(`Dica: ${hints[currentModule]}`, false);
         }
-        
-        // Loop de animação
-        function animate() {
-            requestAnimationFrame(animate);
+
+        // Configura os event listeners
+        function setupEventListeners() {
+            document.getElementById('prev-btn').addEventListener('click', () => {
+                if (currentModule > 0) {
+                    currentModule--;
+                    updateUI();
+                }
+            });
             
-            // Atualiza animações
-            const delta = clock.getDelta();
-            animationMixers.forEach(mixer => mixer.update(delta));
+            document.getElementById('next-btn').addEventListener('click', () => {
+                if (currentModule < modules.length - 1) {
+                    currentModule++;
+                    updateUI();
+                }
+            });
             
-            controls.update();
-            renderer.render(scene, camera);
-        }
-        
-        // Ajusta o tamanho ao redimensionar a janela
-        function onWindowResize() {
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(window.innerWidth, window.innerHeight);
-        }
-        
-        // Configura eventos dos botões
-        document.getElementById('prev-btn').addEventListener('click', () => {
-            if (currentModule > 0) {
-                currentModule--;
+            document.getElementById('submit-btn').addEventListener('click', checkAnswer);
+            
+            document.getElementById('hint-btn').addEventListener('click', provideHint);
+            
+            document.getElementById('reset-btn').addEventListener('click', () => {
+                currentModule = 0;
                 updateUI();
-            }
-        });
-        
-        document.getElementById('next-btn').addEventListener('click', () => {
-            if (currentModule < modules.length - 1) {
-                currentModule++;
-                updateUI();
-            }
-        });
-        
-        document.getElementById('submit-btn').addEventListener('click', checkAnswer);
-        
-        document.getElementById('hint-btn').addEventListener('click', provideHint);
-        
-        document.getElementById('reset-btn').addEventListener('click', () => {
-            currentModule = 0;
-            updateUI();
-        });
-        
-        document.getElementById('task-input').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                checkAnswer();
-            }
-        });
-        
-        // Inicializa o jogo
-        init();
+            });
+            
+            document.getElementById('task-input').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    checkAnswer();
+                }
+            });
+        }
+
+        // Inicia o carregamento quando a página estiver pronta
+        document.addEventListener('DOMContentLoaded', simulateLoading);
     </script>
 </body>
 </html>
