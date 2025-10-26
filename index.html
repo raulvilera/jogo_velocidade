@@ -3,10 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cinemática 3D - Navegador Espacial</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <title>Jogo Educacional - Velocidade e Velocidade Média</title>
     <style>
-        /* Reset e Estilos Globais */
         * {
             margin: 0;
             padding: 0;
@@ -15,1395 +13,1465 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
-            color: #333;
-            overflow: hidden;
-            height: 100vh;
-        }
-
-        /* Cabeçalho do Jogo */
-        .game-header {
-            background: linear-gradient(90deg, #2c3e50 0%, #34495e 100%);
-            color: white;
-            padding: 15px 20px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-            z-index: 100;
-        }
-
-        .header-container {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
             display: flex;
-            gap: 30px;
+            justify-content: center;
             align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
             max-width: 1400px;
-            margin: 0 auto;
-            flex-wrap: wrap;
-        }
-
-        .header-item {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .header-item label {
-            font-weight: 600;
-            white-space: nowrap;
-        }
-
-        .header-item select,
-        .header-item input {
-            padding: 8px 12px;
-            border: none;
-            border-radius: 4px;
-            font-size: 14px;
             background: white;
-            color: #333;
-            min-width: 150px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
         }
 
-        .header-item input[readonly] {
-            background: #ecf0f1;
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .content {
+            display: flex;
+            min-height: 600px;
+        }
+
+        .sidebar {
+            width: 350px;
+            background: #f8f9fa;
+            padding: 30px;
+            border-right: 1px solid #e0e0e0;
+            overflow-y: auto;
+        }
+
+        .sidebar h2 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 1.3em;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            color: #555;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 0.95em;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: border-color 0.3s;
+            font-family: inherit;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-group input[type="date"] {
+            cursor: pointer;
+        }
+
+        .info-display {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 10px;
+            border-left: 4px solid #667eea;
+        }
+
+        .info-display p {
+            color: #666;
+            font-size: 0.95em;
+            margin: 5px 0;
+        }
+
+        .info-display strong {
+            color: #333;
+        }
+
+        .start-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin-top: 20px;
+        }
+
+        .start-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .start-btn:disabled {
+            opacity: 0.5;
             cursor: not-allowed;
         }
 
-        .header-item select:focus,
-        .header-item input:focus {
-            outline: none;
-            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.3);
-        }
-
-        #nivel-info {
-            font-size: 16px;
-            font-weight: 600;
-            padding: 8px 16px;
-            background: rgba(52, 152, 219, 0.2);
-            border-radius: 4px;
-        }
-
-        /* Container Principal */
-        .game-container {
-            display: flex;
-            height: calc(100vh - 70px);
-            gap: 0;
-        }
-
-        /* Canvas 3D */
-        #canvas-container {
+        .main-area {
             flex: 1;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            position: relative;
-            overflow: hidden;
+            padding: 30px;
+            background: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
         }
 
-        canvas {
-            display: block;
+        .welcome-screen {
+            text-align: center;
+        }
+
+        .welcome-screen h2 {
+            color: #333;
+            font-size: 2em;
+            margin-bottom: 20px;
+        }
+
+        .welcome-screen p {
+            color: #666;
+            font-size: 1.1em;
+            line-height: 1.6;
+            max-width: 500px;
+            margin: 0 auto 30px;
+        }
+
+        .welcome-screen .emoji {
+            font-size: 4em;
+            margin-bottom: 20px;
+        }
+
+        #gameContainer {
             width: 100%;
             height: 100%;
+            display: none;
+            position: relative;
         }
 
-        /* Painel de Controle */
-        .control-panel {
-            width: 350px;
-            background: white;
-            overflow-y: auto;
-            box-shadow: -4px 0 8px rgba(0, 0, 0, 0.1);
+        .game-ui {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
             padding: 20px;
-            border-left: 4px solid #3498db;
+            border-radius: 10px;
+            font-size: 1.1em;
+            z-index: 100;
+            min-width: 250px;
         }
 
-        .panel-section {
-            margin-bottom: 25px;
-            padding-bottom: 20px;
-            border-bottom: 1px solid #ecf0f1;
+        .game-ui h3 {
+            margin-bottom: 10px;
+            font-size: 1.3em;
         }
 
-        .panel-section:last-child {
-            border-bottom: none;
+        .game-ui p {
+            margin: 5px 0;
         }
 
-        .panel-section h3 {
-            color: #2c3e50;
-            font-size: 16px;
-            margin-bottom: 12px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+        .score-display {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            font-size: 1.2em;
+            z-index: 100;
+            text-align: right;
         }
 
-        .panel-section p {
-            font-size: 14px;
-            line-height: 1.6;
-            color: #555;
+        .score-display p {
+            margin: 5px 0;
         }
 
-        /* Campos de Entrada */
-        #input-fields {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
+        .phase-indicator {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-size: 1.1em;
+            z-index: 100;
         }
 
-        .input-group {
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
+        .game-input-area {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            z-index: 100;
+            min-width: 300px;
         }
 
-        .input-group label {
+        .game-input-area label {
+            display: block;
+            margin-bottom: 8px;
             font-weight: 600;
-            font-size: 13px;
-            color: #2c3e50;
         }
 
-        .input-group input,
-        .input-group select {
-            padding: 10px;
-            border: 1px solid #bdc3c7;
-            border-radius: 4px;
-            font-size: 14px;
-            transition: border-color 0.3s;
-        }
-
-        .input-group input:focus,
-        .input-group select:focus {
-            outline: none;
-            border-color: #3498db;
-            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
-        }
-
-        /* Feedback */
-        .feedback {
-            padding: 12px;
-            border-radius: 4px;
-            font-weight: 500;
-            text-align: center;
-            min-height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .feedback.success {
-            background: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-        }
-
-        .feedback.error {
-            background: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-        }
-
-        .feedback.info {
-            background: #d1ecf1;
-            color: #0c5460;
-            border: 1px solid #bee5eb;
-        }
-
-        /* Botões */
-        .btn-primary,
-        .btn-secondary {
+        .game-input-area input {
             width: 100%;
-            padding: 12px;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 2px solid #667eea;
+            border-radius: 5px;
+            font-size: 1em;
+        }
+
+        .game-input-area button {
+            width: 100%;
+            padding: 10px;
+            background: #667eea;
+            color: white;
             border: none;
-            border-radius: 4px;
-            font-size: 14px;
+            border-radius: 5px;
+            font-size: 1em;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+            transition: background 0.3s;
         }
 
-        .btn-primary {
-            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+        .game-input-area button:hover {
+            background: #764ba2;
+        }
+
+        .feedback-message {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.9);
             color: white;
-            margin-bottom: 10px;
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(52, 152, 219, 0.4);
-        }
-
-        .btn-primary:active {
-            transform: translateY(0);
-        }
-
-        .btn-secondary {
-            background: linear-gradient(135deg, #95a5a6 0%, #7f8c8d 100%);
-            color: white;
-            margin-bottom: 10px;
-        }
-
-        .btn-secondary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(127, 140, 141, 0.4);
-        }
-
-        .btn-secondary:active {
-            transform: translateY(0);
-        }
-
-        /* Barra de Progresso */
-        .progress-bar {
-            width: 100%;
-            height: 20px;
-            background: #ecf0f1;
+            padding: 30px;
             border-radius: 10px;
-            overflow: hidden;
+            text-align: center;
+            z-index: 200;
+            max-width: 400px;
+            display: none;
+        }
+
+        .feedback-message.success {
+            border: 3px solid #4caf50;
+        }
+
+        .feedback-message.error {
+            border: 3px solid #f44336;
+        }
+
+        .feedback-message h3 {
+            font-size: 1.5em;
             margin-bottom: 10px;
         }
 
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #27ae60 0%, #2ecc71 100%);
-            width: 0%;
-            transition: width 0.3s;
+        .feedback-message p {
+            font-size: 1.1em;
+            margin: 10px 0;
         }
 
-        #progresso-text {
-            text-align: center;
+        .next-btn {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 1em;
             font-weight: 600;
-            color: #27ae60;
+            cursor: pointer;
         }
 
-        /* Scroll Bar Customizado */
-        .control-panel::-webkit-scrollbar {
-            width: 8px;
+        .next-btn:hover {
+            background: #764ba2;
         }
 
-        .control-panel::-webkit-scrollbar-track {
-            background: #ecf0f1;
+        .final-screen {
+            text-align: center;
         }
 
-        .control-panel::-webkit-scrollbar-thumb {
-            background: #bdc3c7;
-            border-radius: 4px;
+        .final-screen h2 {
+            color: #333;
+            font-size: 2.5em;
+            margin-bottom: 20px;
         }
 
-        .control-panel::-webkit-scrollbar-thumb:hover {
-            background: #95a5a6;
+        .final-score {
+            font-size: 3em;
+            color: #667eea;
+            font-weight: bold;
+            margin: 30px 0;
         }
 
-        /* Responsividade */
+        .final-screen p {
+            color: #666;
+            font-size: 1.1em;
+            margin: 15px 0;
+        }
+
+        .restart-btn {
+            padding: 15px 40px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin-top: 30px;
+        }
+
+        .restart-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
         @media (max-width: 1024px) {
-            .game-container {
+            .content {
                 flex-direction: column;
             }
 
-            .control-panel {
+            .sidebar {
                 width: 100%;
-                max-height: 300px;
-                border-left: none;
-                border-top: 4px solid #3498db;
+                border-right: none;
+                border-bottom: 1px solid #e0e0e0;
             }
 
-            #canvas-container {
-                flex: 1;
-                min-height: 400px;
-            }
-
-            .header-container {
-                gap: 15px;
-            }
-
-            .header-item {
-                flex: 1;
-                min-width: 150px;
+            .header h1 {
+                font-size: 1.8em;
             }
         }
 
         @media (max-width: 768px) {
-            .game-header {
-                padding: 10px 15px;
+            .header h1 {
+                font-size: 1.5em;
             }
 
-            .header-container {
-                gap: 10px;
-                justify-content: space-between;
+            .header p {
+                font-size: 0.95em;
             }
 
-            .header-item select,
-            .header-item input {
-                min-width: 100px;
-                font-size: 12px;
+            .main-area {
+                padding: 20px;
             }
 
-            .control-panel {
+            .game-ui {
+                font-size: 0.9em;
                 padding: 15px;
             }
 
-            .panel-section h3 {
-                font-size: 14px;
+            .score-display {
+                font-size: 1em;
+                padding: 15px;
             }
+        }
 
-            .panel-section p {
-                font-size: 12px;
-            }
+        .hidden {
+            display: none !important;
+        }
 
-            .btn-primary,
-            .btn-secondary {
-                font-size: 12px;
-                padding: 10px;
-            }
+        .loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+        }
+
+        .spinner {
+            border: 4px solid rgba(102, 126, 234, 0.3);
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
     </style>
 </head>
 <body>
-    <!-- Cabeçalho do Jogo -->
-    <header class="game-header">
-        <div class="header-container">
-            <div class="header-item">
-                <label for="aluno-select">Aluno:</label>
-                <select id="aluno-select">
-                    <option value="">Selecione um aluno</option>
-                </select>
+    <div class="container">
+        <div class="header">
+            <h1>🚗 Jogo Educacional: Velocidade e Velocidade Média</h1>
+            <p>Aprenda sobre velocidade através de desafios interativos em 3D</p>
+        </div>
+
+        <div class="content">
+            <div class="sidebar">
+                <h2>Dados do Aluno</h2>
+                
+                <div class="form-group">
+                    <label for="studentSelect">Selecione seu nome:</label>
+                    <select id="studentSelect">
+                        <option value="">-- Escolha seu nome --</option>
+                        <!-- Os alunos serão carregados aqui via JavaScript -->
+                    </select>
+                </div>
+
+                <div class="info-display" id="classInfo" style="display: none;">
+                    <p><strong>Turma:</strong> <span id="classDisplay">-</span></p>
+                    <p><strong>Data:</strong> <span id="dateDisplay">-</span></p>
+                </div>
+
+                <div class="form-group">
+                    <label for="dateInput">Data (será preenchida automaticamente):</label>
+                    <input type="date" id="dateInput" disabled>
+                </div>
+
+                <div style="background: #e3f2fd; padding: 15px; border-radius: 8px; margin-top: 20px;">
+                    <h3 style="color: #1976d2; margin-bottom: 10px;">ℹ️ Como Jogar:</h3>
+                    <p style="color: #555; font-size: 0.9em; line-height: 1.5;">
+                        1. Selecione seu nome<br>
+                        2. Clique em "Iniciar Jogo"<br>
+                        3. Complete 5 fases progressivas<br>
+                        4. Cada fase vale 2 pontos<br>
+                        5. Total máximo: 10 pontos<br>
+                        6. Você pode tentar cada fase apenas uma vez!
+                    </p>
+                </div>
+
+                <button class="start-btn" id="startBtn" disabled>Iniciar Jogo</button>
             </div>
-            <div class="header-item">
-                <label for="turma-input">Turma:</label>
-                <input type="text" id="turma-input" readonly>
-            </div>
-            <div class="header-item">
-                <label for="data-input">Data:</label>
-                <input type="date" id="data-input" readonly>
-            </div>
-            <div class="header-item">
-                <span id="nivel-info">Nível: 1/10</span>
+
+            <div class="main-area">
+                <div class="welcome-screen" id="welcomeScreen">
+                    <div class="emoji">🎮</div>
+                    <h2>Bem-vindo ao Jogo!</h2>
+                    <p>Selecione seu nome na barra lateral para começar a jogar. Você enfrentará 5 desafios sobre velocidade e velocidade média. Boa sorte!</p>
+                </div>
+
+                <div id="gameContainer">
+                    <canvas id="gameCanvas"></canvas>
+                    
+                    <div class="game-ui" id="gameUI">
+                        <h3>Fase <span id="phaseNumber">1</span></h3>
+                        <p id="phaseDescription">Descrição da fase</p>
+                    </div>
+
+                    <div class="score-display" id="scoreDisplay">
+                        <p>Pontuação: <strong id="currentScore">0</strong>/10</p>
+                        <p>Fase: <strong id="phaseCount">1</strong>/5</p>
+                    </div>
+
+                    <div class="phase-indicator" id="phaseIndicator">
+                        Fase 1: Calcule a Velocidade Média
+                    </div>
+
+                    <div class="game-input-area" id="gameInputArea">
+                        <label for="gameInput">Sua resposta:</label>
+                        <input type="number" id="gameInput" placeholder="Digite o valor" step="0.1">
+                        <button id="submitBtn">Enviar Resposta</button>
+                        <p id="inputHint" style="font-size: 0.85em; margin-top: 10px; color: #aaa;"></p>
+                    </div>
+
+                    <div class="feedback-message" id="feedbackMessage">
+                        <h3 id="feedbackTitle">Parabéns!</h3>
+                        <p id="feedbackText">Sua resposta está correta!</p>
+                        <button class="next-btn" id="nextBtn">Próxima Fase</button>
+                    </div>
+                </div>
+
+                <div class="final-screen" id="finalScreen" style="display: none;">
+                    <h2>🎉 Parabéns!</h2>
+                    <p>Você completou todas as 5 fases!</p>
+                    <div class="final-score" id="finalScore">0/10</div>
+                    <p id="finalMessage">Excelente desempenho!</p>
+                    <button class="restart-btn" id="restartBtn">Voltar ao Início</button>
+                </div>
             </div>
         </div>
-    </header>
+    </div>
 
-    <!-- Container Principal do Jogo -->
-    <main class="game-container">
-        <!-- Canvas 3D -->
-        <div id="canvas-container"></div>
-
-        <!-- Painel de Controle e Informações -->
-        <aside class="control-panel">
-            <div class="panel-section">
-                <h3>Objetivo do Nível</h3>
-                <p id="objetivo-text">Carregando...</p>
-            </div>
-
-            <div class="panel-section">
-                <h3>Instruções</h3>
-                <p id="instrucoes-text">Carregando...</p>
-            </div>
-
-            <div class="panel-section">
-                <h3>Entrada de Dados</h3>
-                <div id="input-fields">
-                    <!-- Campos de entrada dinâmicos serão inseridos aqui -->
-                </div>
-            </div>
-
-            <div class="panel-section">
-                <h3>Feedback</h3>
-                <p id="feedback-text" class="feedback"></p>
-            </div>
-
-            <div class="panel-section">
-                <button id="enviar-resposta" class="btn-primary">Enviar Resposta</button>
-                <button id="proximo-nivel" class="btn-secondary" style="display:none;">Próximo Nível</button>
-                <button id="reiniciar-nivel" class="btn-secondary" style="display:none;">Reiniciar Nível</button>
-            </div>
-
-            <div class="panel-section">
-                <h3>Progresso</h3>
-                <div class="progress-bar">
-                    <div id="progress-fill" class="progress-fill"></div>
-                </div>
-                <p id="progresso-text">0%</p>
-            </div>
-        </aside>
-    </main>
+    <!-- Three.js Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 
     <script>
-        /**
-         * Script para gerenciar os dados dos alunos e preencher o cabeçalho do jogo
-         */
+        // ============================================================================
+        // JOGO EDUCACIONAL: VELOCIDADE E VELOCIDADE MÉDIA
+        // ============================================================================
 
-        // Dados dos alunos (será carregado do JSON)
-        let alunosData = [];
+        // Estado global do jogo
+        const gameState = {
+            currentPhase: 0,
+            score: 0,
+            studentName: null,
+            studentClass: null,
+            phaseAttempts: [false, false, false, false, false], // Controla se cada fase foi tentada
+            phaseScores: [0, 0, 0, 0, 0], // Pontuação de cada fase
+            scene: null,
+            camera: null,
+            renderer: null,
+            gameActive: false,
+            currentAnswer: null,
+            correctAnswer: null,
+            phaseData: null
+        };
 
-        /**
-         * Carrega os dados dos alunos do arquivo JSON
-         */
-        async function carregarAlunos() {
-            try {
-                // Dados dos alunos em formato JSON
-                alunosData = [
-                    {"Nome": "ÁGATHA NIKOLLE DA SILVA RAMOS", "Turma": "9ºA"},
-                    {"Nome": "AMANDA BEATRIZ LEAL MOURAD", "Turma": "9ºA"},
-                    {"Nome": "ANNA NICOLY BENVINDO DOS SANTOS", "Turma": "9ºA"},
-                    {"Nome": "ARTHUR DOS SANTOS", "Turma": "9ºA"},
-                    {"Nome": "BEATRIZ UCHOA DOS SANTOS", "Turma": "9ºA"},
-                    {"Nome": "BRUNO EDUARDO NOGUEIRA DE OLIVEIRA", "Turma": "9ºA"},
-                    {"Nome": "CARLOS EDUARDO BELMIRO DOS SANTOS", "Turma": "9ºA"},
-                    {"Nome": "CHRISTIAN DAVI DE OLIVEIRA", "Turma": "9ºA"},
-                    {"Nome": "FILIPE RODRIGUES SANTOS", "Turma": "9ºA"},
-                    {"Nome": "GABRIEL ALMEIDA MOSCARDINI", "Turma": "9ºA"},
-                    {"Nome": "GIOVANA MOTA VAZ DE JESUS", "Turma": "9ºA"},
-                    {"Nome": "GUILHERME DA SILVA GUIMARÃES", "Turma": "9ºA"},
-                    {"Nome": "HELOÍSA LEAL DOS REIS", "Turma": "9ºA"},
-                    {"Nome": "IAGO ANJOS DE JESUS", "Turma": "9ºA"},
-                    {"Nome": "IGNACIO LINS SANTOS", "Turma": "9ºA"},
-                    {"Nome": "ISADORA DE SOUZA SILVA", "Turma": "9ºA"},
-                    {"Nome": "JOAO VICTOR BATISTA DUARTE", "Turma": "9ºA"},
-                    {"Nome": "JULIANA SANTOS LIMA", "Turma": "9ºA"},
-                    {"Nome": "MANUELA VITÓRIA LIMA DOS SANTOS", "Turma": "9ºA"},
-                    {"Nome": "MIGUEL ALVES OLIVEIRA", "Turma": "9ºA"},
-                    {"Nome": "ORIANA JOSE TUAREZ RENGEL", "Turma": "9ºA"},
-                    {"Nome": "RAFAELLA VITÓRIA EXPEDITA DE ANDRADE MARQUES", "Turma": "9ºA"},
-                    {"Nome": "RAYLAN DE JESUS BARBOSA", "Turma": "9ºA"},
-                    {"Nome": "REBECA DOS SANTOS SOUSA", "Turma": "9ºA"},
-                    {"Nome": "RICHARD JOSÉ DOS SANTOS", "Turma": "9ºA"},
-                    {"Nome": "SARA CRISTINA PASSOS MARTINS", "Turma": "9ºA"},
-                    {"Nome": "VANESSA CARDOSO DOS SANTOS", "Turma": "9ºA"},
-                    {"Nome": "JULIA DIAS AZEVEDO", "Turma": "9ºA"},
-                    {"Nome": "SAMARA HELEN DA SILVA", "Turma": "9ºA"},
-                    {"Nome": "LUIS MATHEUS DA SILVA RAMOS", "Turma": "9ºA"},
-                    {"Nome": "FABIO HENRIQUE DA SILVA", "Turma": "9ºA"},
-                    {"Nome": "SOPHIA MIRELLA BRAGA GARCIA", "Turma": "9ºA"}
-                ];
-                
-                preencherDropdownAlunos();
-                console.log(`${alunosData.length} alunos carregados com sucesso.`);
-            } catch (error) {
-                console.error('Erro ao carregar dados dos alunos:', error);
-                // Fallback: usar dados de exemplo
-                alunosData = [
-                    { Nome: 'ÁGATHA NIKOLLE DA SILVA RAMOS', Turma: '9ºA' },
-                    { Nome: 'AMANDA BEATRIZ LEAL MOURAD', Turma: '9ºA' },
-                    { Nome: 'ANNA NICOLY BENVINDO DOS SANTOS', Turma: '9ºA' },
-                    { Nome: 'ARTHUR DOS SANTOS', Turma: '9ºA' },
-                    { Nome: 'BEATRIZ UCHOA DOS SANTOS', Turma: '9ºA' }
-                ];
-                preencherDropdownAlunos();
-            }
-        }
-
-        /**
-         * Preenche o dropdown de alunos com os dados carregados
-         */
-        function preencherDropdownAlunos() {
-            const selectElement = document.getElementById('aluno-select');
-            selectElement.innerHTML = '<option value="">Selecione um aluno</option>';
-
-            alunosData.forEach((aluno, index) => {
-                const option = document.createElement('option');
-                option.value = index;
-                option.textContent = aluno.Nome;
-                selectElement.appendChild(option);
-            });
-
-            // Adicionar event listener para atualizar turma e data
-            selectElement.addEventListener('change', atualizarTurmaEData);
-        }
-
-        /**
-         * Atualiza o campo de turma e data quando um aluno é selecionado
-         */
-        function atualizarTurmaEData() {
-            const selectElement = document.getElementById('aluno-select');
-            const turmaInput = document.getElementById('turma-input');
-            const dataInput = document.getElementById('data-input');
-
-            if (selectElement.value === '') {
-                turmaInput.value = '';
-                dataInput.value = '';
-            } else {
-                const alunoIndex = parseInt(selectElement.value);
-                const aluno = alunosData[alunoIndex];
-                turmaInput.value = aluno.Turma;
-                
-                // Preencher com a data atual
-                const hoje = new Date();
-                const ano = hoje.getFullYear();
-                const mes = String(hoje.getMonth() + 1).padStart(2, '0');
-                const dia = String(hoje.getDate()).padStart(2, '0');
-                dataInput.value = `${ano}-${mes}-${dia}`;
-            }
-        }
-
-        /**
-         * Retorna os dados do aluno selecionado
-         */
-        function getAlunoSelecionado() {
-            const selectElement = document.getElementById('aluno-select');
-            if (selectElement.value === '') {
-                return null;
-            }
-            const alunoIndex = parseInt(selectElement.value);
-            return alunosData[alunoIndex];
-        }
-
-        /**
-         * Retorna todos os dados dos alunos
-         */
-        function getTodosAlunos() {
-            return alunosData;
-        }
-
-        // Carregar alunos quando a página for carregada
-        document.addEventListener('DOMContentLoaded', carregarAlunos);
-    </script>
-
-    <script>
-        /**
-         * Script principal do jogo "Cinemática 3D - Navegador Espacial"
-         * Gerencia a lógica do jogo, renderização 3D e progressão de níveis
-         */
-
-        // Variáveis globais
-        let scene, camera, renderer;
-        let nivelAtual = 1;
-        let respostaCorreta = false;
-        let pontuacao = 0;
-        let nivelConcluido = false;
-
-        // Definição dos 10 níveis
-        const niveis = [
+        // Dados das fases
+        const phases = [
+            {
+                id: 0,
+                title: "Fase 1: Calcule a Velocidade Média",
+                description: "Um carro percorre 100 km em 1 hora no Trecho 1, e 120 km em 1 hora no Trecho 2. Qual é a velocidade média total?",
+                type: "average_velocity",
+                data: {
+                    trecho1: { distance: 100, time: 1 },
+                    trecho2: { distance: 120, time: 1 }
+                },
+                correctAnswer: 110,
+                unit: "km/h",
+                hint: "Calcule a velocidade de cada trecho e depois faça a média aritmética",
+                points: 2
+            },
             {
                 id: 1,
-                titulo: 'Nível 1: Referencial e Repouso/Movimento',
-                objetivo: 'Identificar qual dos três objetos (A, B, C) está em repouso em relação ao referencial móvel (a sonda).',
-                instrucoes: 'Observe os três objetos no espaço. Qual deles está em repouso em relação à sonda? Selecione A, B ou C.',
-                tipo: 'multipla-escolha',
-                opcoes: ['Objeto A', 'Objeto B', 'Objeto C'],
-                respostaCorreta: 1, // Índice da resposta correta
-                descricao: 'Competência BNCC: EF09FI01 - Classificar o estado de movimento ou de repouso, a partir de um dado referencial.'
+                title: "Fase 2: Calcule a Velocidade",
+                description: "Um caminhão percorre 150 metros em 30 segundos. Qual é sua velocidade?",
+                type: "velocity",
+                data: {
+                    distance: 150,
+                    time: 30
+                },
+                correctAnswer: 5,
+                unit: "m/s",
+                hint: "Use a fórmula: V = ΔS / Δt",
+                points: 2
             },
             {
                 id: 2,
-                titulo: 'Nível 2: Posição e Referencial',
-                objetivo: 'Ajustar a posição da sonda (Ponto B) em um eixo 3D para que ela esteja a uma distância específica de um Ponto A.',
-                instrucoes: 'Insira as coordenadas (X, Y, Z) para posicionar a sonda a 5 unidades de distância do Ponto A (origem).',
-                tipo: 'coordenadas-3d',
-                coordenadas: { x: 3, y: 4, z: 0 }, // Uma das respostas corretas
-                tolerancia: 0.5,
-                descricao: 'Competência BNCC: EF09FI02 - Diferenciar trajetória, posição, deslocamento e distância.'
+                title: "Fase 3: Calcule a Velocidade Média",
+                description: "Um veículo percorre 200 km em 4 horas. Qual é sua velocidade média?",
+                type: "velocity",
+                data: {
+                    distance: 200,
+                    time: 4
+                },
+                correctAnswer: 50,
+                unit: "km/h",
+                hint: "Divida a distância total pelo tempo total",
+                points: 2
             },
             {
                 id: 3,
-                titulo: 'Nível 3: Trajetória vs. Distância',
-                objetivo: 'Guiar a sonda através de um labirinto 3D e calcular a distância total percorrida.',
-                instrucoes: 'Navegue a sonda pelo labirinto. Ao final, calcule a distância total percorrida (em unidades).',
-                tipo: 'calculo-distancia',
-                distanciaCorreta: 25.5,
-                tolerancia: 1.0,
-                descricao: 'Competência BNCC: EF09FI02 - Diferenciar trajetória, posição, deslocamento e distância.'
+                title: "Fase 4: Calcule a Velocidade Instantânea",
+                description: "Um drone percorre 9000 metros em 300 segundos. Qual é sua velocidade?",
+                type: "velocity",
+                data: {
+                    distance: 9000,
+                    time: 300
+                },
+                correctAnswer: 30,
+                unit: "m/s",
+                hint: "Aplique a fórmula de velocidade: V = ΔS / Δt",
+                points: 2
             },
             {
                 id: 4,
-                titulo: 'Nível 4: Deslocamento (Vetorial)',
-                objetivo: 'Calcular o vetor Deslocamento (ΔS) em 3D quando a sonda vai do Ponto A ao Ponto B.',
-                instrucoes: 'A sonda vai de A (0, 0, 0) a B (3, 4, 5). Calcule o deslocamento ΔS = (ΔX, ΔY, ΔZ).',
-                tipo: 'deslocamento-3d',
-                deslocamento: { x: 3, y: 4, z: 5 },
-                tolerancia: 0.5,
-                descricao: 'Competência BNCC: EF09FI02 - Diferenciar trajetória, posição, deslocamento e distância.'
-            },
-            {
-                id: 5,
-                titulo: 'Nível 5: Distância vs. Deslocamento',
-                objetivo: 'Diferenciar Distância Total Percorrida e Deslocamento quando a sonda faz um percurso de ida e volta.',
-                instrucoes: 'A sonda vai de A a B (10 km) e volta a A. Calcule: (1) Distância Total Percorrida, (2) Deslocamento.',
-                tipo: 'distancia-vs-deslocamento',
-                distanciaTotal: 20,
-                deslocamento: 0,
-                tolerancia: 0.5,
-                descricao: 'Competência BNCC: EF09FI02 - Diferenciar trajetória, posição, deslocamento e distância.'
-            },
-            {
-                id: 6,
-                titulo: 'Nível 6: Velocidade Média (Cálculo)',
-                objetivo: 'Calcular a Velocidade Média (Vm = ΔS/Δt) e escolher a rota correta.',
-                instrucoes: 'A sonda percorre 100 km em 2 horas. Calcule a Velocidade Média em km/h.',
-                tipo: 'velocidade-media',
-                velocidadeCorreta: 50,
-                tolerancia: 1,
-                descricao: 'Competência BNCC: EF09FI03 - Reconhecer as características que definem o movimento retilíneo uniforme e variado.'
-            },
-            {
-                id: 7,
-                titulo: 'Nível 7: Unidades de Medida',
-                objetivo: 'Converter a Velocidade Média de km/h para m/s.',
-                instrucoes: 'Converta 36 km/h para m/s. (Dica: divida por 3,6)',
-                tipo: 'conversao-unidades',
-                velocidadeCorreta: 10,
-                tolerancia: 0.5,
-                descricao: 'Competência BNCC: EF09FI03 - Reconhecer as características que definem o movimento retilíneo uniforme e variado.'
-            },
-            {
-                id: 8,
-                titulo: 'Nível 8: Movimento Retilíneo Uniforme (MRU)',
-                objetivo: 'Prever a Posição Final da sonda em MRU usando S = S0 + V*t.',
-                instrucoes: 'A sonda está em S0 = 10 m, com velocidade V = 5 m/s. Qual será sua posição após t = 3 segundos?',
-                tipo: 'posicao-final',
-                posicaoCorreta: 25,
-                tolerancia: 0.5,
-                descricao: 'Competência BNCC: EF09FI03 - Reconhecer as características que definem o movimento retilíneo uniforme e variado.'
-            },
-            {
-                id: 9,
-                titulo: 'Nível 9: Velocidade Instantânea',
-                objetivo: 'Identificar o momento de maior/menor velocidade instantânea.',
-                instrucoes: 'Observe a sonda passando por 5 pontos. Em qual ponto a velocidade instantânea é máxima?',
-                tipo: 'velocidade-instantanea',
-                pontoCorreto: 3, // Índice do ponto (0-4)
-                opcoes: ['Ponto 1', 'Ponto 2', 'Ponto 3', 'Ponto 4', 'Ponto 5'],
-                descricao: 'Competência BNCC: EF09FI04 - Aplicar as equações horárias relacionadas ao movimento.'
-            },
-            {
-                id: 10,
-                titulo: 'Nível 10: Aplicação Integrada',
-                objetivo: 'Calcular a Velocidade Média Total de um percurso dividido em dois trechos.',
-                instrucoes: 'Trecho 1: 100 km em 1 hora. Trecho 2: 120 km em 1 hora. Qual é a Vm total?',
-                tipo: 'velocidade-media-total',
-                velocidadeCorreta: 110,
-                tolerancia: 1,
-                descricao: 'Competência BNCC: EF09FI04 - Aplicar as equações horárias relacionadas ao movimento.'
+                title: "Fase 5: Calcule a Velocidade Média",
+                description: "Um carro viaja 300 km em 6 horas. Qual é sua velocidade média?",
+                type: "velocity",
+                data: {
+                    distance: 300,
+                    time: 6
+                },
+                correctAnswer: 50,
+                unit: "km/h",
+                hint: "Velocidade média = Distância total / Tempo total",
+                points: 2
             }
         ];
 
-        /**
-         * Inicializa a cena 3D com Three.js
-         */
-        function inicializarCena3D() {
-            const container = document.getElementById('canvas-container');
+        // Dados dos alunos
+        const alunos = [
+            {"nome": "ALEJANDRO VIEIRA LIMA", "turma": "9ºB"},
+            {"nome": "ALEX GUSTAVO DA SILVA VIEIRA", "turma": "9ºB"},
+            {"nome": "ALEXANDRE SERAFIM JUNIOR", "turma": "9ºC"},
+            {"nome": "ALLAN BEZERRA DE LIMA", "turma": "9ºB"},
+            {"nome": "AMANDA BEATRIZ LEAL MOURAD", "turma": "9ºA"},
+            {"nome": "ANA LUIZA DO NASCIMENTO", "turma": "9ºC"},
+            {"nome": "ANDREY FELIPE ALVES DOS SANTOS", "turma": "9ºB"},
+            {"nome": "ANNA JULYA SILVA MELO", "turma": "9ºC"},
+            {"nome": "ANNA NICOLY BENVINDO DOS SANTOS", "turma": "9ºA"},
+            {"nome": "ARTHUR DOS SANTOS", "turma": "9ºA"},
+            {"nome": "ARTHUR EMANUEL ALMEIDA REIS", "turma": "9ºC"},
+            {"nome": "ARTHUR MARYANO MENDES", "turma": "9ºB"},
+            {"nome": "BEATRIZ UCHOA DOS SANTOS", "turma": "9ºA"},
+            {"nome": "BRUNO EDUARDO NOGUEIRA DE OLIVEIRA", "turma": "9ºA"},
+            {"nome": "CARLOS AUGUSTO DIAS DE MENDONÇA", "turma": "9ºC"},
+            {"nome": "CARLOS EDUARDO BELMIRO DOS SANTOS", "turma": "9ºA"},
+            {"nome": "CARLOS EDUARDO OLIVEIRA SABATERRA", "turma": "9ºB"},
+            {"nome": "CHRISTIAN DAVI DE OLIVEIRA", "turma": "9ºA"},
+            {"nome": "DAPHINE SINDIFER RODRIGUES SILVA", "turma": "9ºC"},
+            {"nome": "EDUARDA DE SOUSA OLIVEIRA", "turma": "9ºB"},
+            {"nome": "ELOISA DE OLIVEIRA CARVALHO", "turma": "9ºC"},
+            {"nome": "ENZO BAPTISTA MAIA", "turma": "9ºC"},
+            {"nome": "EVELLYN ANGELINA CAVALCANTE DE OLIVEIRA", "turma": "9ºC"},
+            {"nome": "FABIO HENRIQUE DA SILVA", "turma": "9ºA"},
+            {"nome": "FELIPE RITIELLI NEVES DA SILVA", "turma": "9ºC"},
+            {"nome": "FILIPE ANDRADE DE LIMA", "turma": "9ºB"},
+            {"nome": "FILIPE RODRIGUES SANTOS", "turma": "9ºA"},
+            {"nome": "GABRIEL ALMEIDA MOSCARDINI", "turma": "9ºA"},
+            {"nome": "GABRIEL VICTOR OLIVEIRA SANTOS", "turma": "9ºC"},
+            {"nome": "GIOVANA MOTA VAZ DE JESUS", "turma": "9ºA"},
+            {"nome": "GIOVANNA MARTINEZ FERREIRA", "turma": "9ºB"},
+            {"nome": "GIOVANNA SOUSA DA SILVA", "turma": "9ºC"},
+            {"nome": "GRAZIELLE VITÓRIA SILVA FIGUEIREDO", "turma": "9ºB"},
+            {"nome": "GUILHERME DA SILVA GUIMARÃES", "turma": "9ºA"},
+            {"nome": "GUSTAVO FURLAN GUEDES DA SILVA", "turma": "9ºC"},
+            {"nome": "GUSTAVO LOPES DE MENEZES DA SILVA", "turma": "9ºC"},
+            {"nome": "HELOÍSA LEAL DOS REIS", "turma": "9ºA"},
+            {"nome": "IAGO ANJOS DE JESUS", "turma": "9ºA"},
+            {"nome": "IGNACIO LINS SANTOS", "turma": "9ºA"},
+            {"nome": "ISADORA DE SOUZA SILVA", "turma": "9ºA"},
+            {"nome": "JAQUELYNE PEREIRA GONCALVES", "turma": "9ºC"},
+            {"nome": "JOAO VICTOR BATISTA DUARTE", "turma": "9ºA"},
+            {"nome": "JULIA BARBOSA DA SILVA", "turma": "9ºB"},
+            {"nome": "JULIA DIAS AZEVEDO", "turma": "9ºA"},
+            {"nome": "JULIANA SANTOS LIMA", "turma": "9ºA"},
+            {"nome": "KARINA DE JESUS SANTANA", "turma": "9ºB"},
+            {"nome": "KAUAN ALAMBERT GOMES DE SOUSA", "turma": "9ºC"},
+            {"nome": "KAUÃ BRYAN MAZARIO BARBEIRO", "turma": "9ºC"},
+            {"nome": "KEMILLY CARVALHO DA FONSECA BRITO", "turma": "9ºC"},
+            {"nome": "KLAIVYN WALLAS ARAUJO ESPIRITO SANTO", "turma": "9ºC"},
+            {"nome": "KRYSTOFER LEITE DA SILVA", "turma": "9ºC"},
+            {"nome": "LEONARDO JUNIOR ALBUQUERQUE DA SILVA", "turma": "9ºB"},
+            {"nome": "LORHANNY CAVALCANTE SANTOS", "turma": "9ºC"},
+            {"nome": "LUIS MATHEUS DA SILVA RAMOS", "turma": "9ºA"},
+            {"nome": "MANUELA VITÓRIA LIMA DOS SANTOS", "turma": "9ºA"},
+            {"nome": "MANUELLA LELIS DA SILVA SIMAO", "turma": "9ºC"},
+            {"nome": "MARCOS DE OLIVEIRA CARVALHO", "turma": "9ºB"},
+            {"nome": "MARIA EDUARDA SILVA SOUZA", "turma": "9ºB"},
+            {"nome": "MIGUEL ALVES OLIVEIRA", "turma": "9ºA"},
+            {"nome": "MIGUEL ANGEL NINA QUISPE", "turma": "9ºB"},
+            {"nome": "MOISES DOS SANTOS BOMFIM", "turma": "9ºB"},
+            {"nome": "MONALISA DOS SANTOS BALDUINO", "turma": "9ºC"},
+            {"nome": "NAHYMÊ VITORIA TAVARES DOS SANTOS", "turma": "9ºB"},
+            {"nome": "NATHAN SANTANA MONTEMOR", "turma": "9ºC"},
+            {"nome": "NICOLAS LUAN MENDES", "turma": "9ºB"},
+            {"nome": "NICOLAS PYETRO CASTRO DE ALMEIDA SOUZA", "turma": "9ºC"},
+            {"nome": "NICOLLAS JHAMAL DA SILVA ALVES", "turma": "9ºC"},
+            {"nome": "ORIANA JOSE TUAREZ RENGEL", "turma": "9ºA"},
+            {"nome": "PEDRO HENRIQUE ARRABAL MANZARO", "turma": "9ºB"},
+            {"nome": "PEDRO HENRIQUE QUEIROZ DE JESUS", "turma": "9ºB"},
+            {"nome": "PIETRO RAMON DE PAIVA MAGALHÃES LEITÃO", "turma": "9ºB"},
+            {"nome": "RAFAELLA VITÓRIA EXPEDITA DE ANDRADE MARQUES", "turma": "9ºA"},
+            {"nome": "RAYLAN DE JESUS BARBOSA", "turma": "9ºA"},
+            {"nome": "REBECA DOS SANTOS SOUSA", "turma": "9ºA"},
+            {"nome": "RICHARD JOSÉ DOS SANTOS", "turma": "9ºA"},
+            {"nome": "SAMARA HELEN DA SILVA", "turma": "9ºA"},
+            {"nome": "SARA CRISTINA PASSOS MARTINS", "turma": "9ºA"},
+            {"nome": "SARAH SILVA ROGER", "turma": "9ºC"},
+            {"nome": "SERGIO RICARDO SILVA DE SOUZA", "turma": "9ºC"},
+            {"nome": "SOPHIA MIRELLA BRAGA GARCIA", "turma": "9ºA"},
+            {"nome": "TATIANA DA SILVA RODRIGUES", "turma": "9ºB"},
+            {"nome": "VANESSA CARDOSO DOS SANTOS", "turma": "9ºA"},
+            {"nome": "VINICIUS COSTA SILVA", "turma": "9ºC"},
+            {"nome": "VITOR HUGO DOMINGOS SANTOS", "turma": "9ºB"},
+            {"nome": "VITÓRIA SILVA VIEIRA", "turma": "9ºC"},
+            {"nome": "WAGNER SILVA MEIRA", "turma": "9ºB"},
+            {"nome": "YASMIM ANDRADE DOS SANTOS", "turma": "9ºB"},
+            {"nome": "ÁGATHA NIKOLLE DA SILVA RAMOS", "turma": "9ºA"}
+        ];
 
-            // Criar cena
-            scene = new THREE.Scene();
-            scene.background = new THREE.Color(0x667eea);
+        // ============================================================================
+        // INICIALIZAÇÃO DO JOGO
+        // ============================================================================
 
-            // Criar câmera
-            const width = container.clientWidth;
-            const height = container.clientHeight;
-            camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000);
-            camera.position.set(0, 5, 10);
-            camera.lookAt(0, 0, 0);
+        document.addEventListener('DOMContentLoaded', () => {
+            loadStudents();
+            setupEventListeners();
+            setCurrentDate();
+        });
 
-            // Criar renderer
-            renderer = new THREE.WebGLRenderer({ antialias: true });
-            renderer.setSize(width, height);
-            renderer.shadowMap.enabled = true;
-            container.appendChild(renderer.domElement);
+        function loadStudents() {
+            const select = document.getElementById('studentSelect');
+            alunos.forEach(student => {
+                const option = document.createElement('option');
+                option.value = JSON.stringify(student);
+                option.textContent = student.nome;
+                select.appendChild(option);
+            });
+        }
 
-            // Adicionar iluminação
-            const luz = new THREE.DirectionalLight(0xffffff, 1);
-            luz.position.set(5, 10, 7);
-            luz.castShadow = true;
-            scene.add(luz);
+        function setupEventListeners() {
+            const studentSelect = document.getElementById('studentSelect');
+            const startBtn = document.getElementById('startBtn');
+            const submitBtn = document.getElementById('submitBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            const restartBtn = document.getElementById('restartBtn');
+            const gameInput = document.getElementById('gameInput');
 
-            const luzAmbiente = new THREE.AmbientLight(0xffffff, 0.5);
-            scene.add(luzAmbiente);
+            studentSelect.addEventListener('change', handleStudentSelection);
+            startBtn.addEventListener('click', startGame);
+            submitBtn.addEventListener('click', submitAnswer);
+            nextBtn.addEventListener('click', nextPhase);
+            restartBtn.addEventListener('click', restartGame);
+            gameInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') submitAnswer();
+            });
+        }
 
-            // Adicionar grid de referência
-            const gridHelper = new THREE.GridHelper(20, 20, 0x888888, 0xcccccc);
-            scene.add(gridHelper);
+        function setCurrentDate() {
+            const today = new Date();
+            const dateString = today.toISOString().split('T')[0];
+            document.getElementById('dateInput').value = dateString;
+            document.getElementById('dateDisplay').textContent = new Date(dateString).toLocaleDateString('pt-BR');
+        }
 
-            // Adicionar eixos de referência
-            const axesHelper = new THREE.AxesHelper(5);
-            scene.add(axesHelper);
+        function handleStudentSelection() {
+            const select = document.getElementById('studentSelect');
+            const classInfo = document.getElementById('classInfo');
+            const startBtn = document.getElementById('startBtn');
 
-            // Inicializar o primeiro nível
-            carregarNivel(nivelAtual);
+            if (select.value) {
+                const student = JSON.parse(select.value);
+                gameState.studentName = student.nome;
+                gameState.studentClass = student.turma;
+                
+                document.getElementById('classDisplay').textContent = student.turma;
+                classInfo.style.display = 'block';
+                startBtn.disabled = false;
+            } else {
+                classInfo.style.display = 'none';
+                startBtn.disabled = true;
+            }
+        }
 
-            // Animar cena
+        function startGame() {
+            gameState.gameActive = true;
+            gameState.currentPhase = 0;
+            gameState.score = 0;
+            gameState.phaseAttempts = [false, false, false, false, false];
+            gameState.phaseScores = [0, 0, 0, 0, 0];
+
+            document.getElementById('welcomeScreen').style.display = 'none';
+            document.getElementById('gameContainer').style.display = 'block';
+            document.getElementById('finalScreen').style.display = 'none';
+
+            initializeThreeJS();
+            loadPhase(0);
+        }
+
+        // ============================================================================
+        // INICIALIZAÇÃO DO THREE.JS
+        // ============================================================================
+
+        function initializeThreeJS() {
+            const canvas = document.getElementById('gameCanvas');
+            const container = document.getElementById('gameContainer');
+
+            // Cena
+            gameState.scene = new THREE.Scene();
+            gameState.scene.background = new THREE.Color(0x87ceeb);
+            gameState.scene.fog = new THREE.Fog(0x87ceeb, 1000, 10000);
+
+            // Câmera
+            gameState.camera = new THREE.PerspectiveCamera(
+                75,
+                container.clientWidth / container.clientHeight,
+                0.1,
+                10000
+            );
+            gameState.camera.position.set(0, 5, 15);
+            gameState.camera.lookAt(0, 0, 0);
+
+            // Renderer
+            gameState.renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+            gameState.renderer.setSize(container.clientWidth, container.clientHeight);
+            gameState.renderer.shadowMap.enabled = true;
+            gameState.renderer.shadowMap.type = THREE.PCFShadowShadowMap;
+
+            // Iluminação
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+            gameState.scene.add(ambientLight);
+
+            const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+            directionalLight.position.set(10, 20, 10);
+            directionalLight.castShadow = true;
+            directionalLight.shadow.mapSize.width = 2048;
+            directionalLight.shadow.mapSize.height = 2048;
+            gameState.scene.add(directionalLight);
+
+            // Chão
+            const groundGeometry = new THREE.PlaneGeometry(200, 100);
+            const groundMaterial = new THREE.MeshLambertMaterial({ color: 0x8b7355 });
+            const ground = new THREE.Mesh(groundGeometry, groundMaterial);
+            ground.rotation.x = -Math.PI / 2;
+            ground.receiveShadow = true;
+            gameState.scene.add(ground);
+
+            // Céu
+            const skyGeometry = new THREE.SphereGeometry(500, 32, 32);
+            const skyMaterial = new THREE.MeshBasicMaterial({
+                color: 0x87ceeb,
+                side: THREE.BackSide
+            });
+            const sky = new THREE.Mesh(skyGeometry, skyMaterial);
+            gameState.scene.add(sky);
+
+            // Redimensionar ao mudar janela
+            window.addEventListener('resize', () => {
+                const width = container.clientWidth;
+                const height = container.clientHeight;
+                gameState.camera.aspect = width / height;
+                gameState.camera.updateProjectionMatrix();
+                gameState.renderer.setSize(width, height);
+            });
+
+            // Loop de animação
             animate();
-
-            // Adicionar event listener para redimensionar
-            window.addEventListener('resize', onWindowResize);
         }
 
-        /**
-         * Carrega o nível especificado
-         */
-        function carregarNivel(numeroNivel) {
-            // Limpar cena
-            while (scene.children.length > 0) {
-                scene.remove(scene.children[0]);
-            }
-
-            // Re-adicionar elementos básicos
-            const luz = new THREE.DirectionalLight(0xffffff, 1);
-            luz.position.set(5, 10, 7);
-            luz.castShadow = true;
-            scene.add(luz);
-
-            const luzAmbiente = new THREE.AmbientLight(0xffffff, 0.5);
-            scene.add(luzAmbiente);
-
-            const gridHelper = new THREE.GridHelper(20, 20, 0x888888, 0xcccccc);
-            scene.add(gridHelper);
-
-            const axesHelper = new THREE.AxesHelper(5);
-            scene.add(axesHelper);
-
-            // Obter dados do nível
-            const nivel = niveis[numeroNivel - 1];
-            nivelAtual = numeroNivel;
-            respostaCorreta = false;
-            nivelConcluido = false;
-
-            // Atualizar interface
-            document.getElementById('nivel-info').textContent = `Nível: ${numeroNivel}/10`;
-            document.getElementById('objetivo-text').textContent = nivel.objetivo;
-            document.getElementById('instrucoes-text').textContent = nivel.instrucoes;
-            document.getElementById('feedback-text').textContent = '';
-            document.getElementById('feedback-text').className = 'feedback';
-
-            // Mostrar/ocultar botões
-            document.getElementById('enviar-resposta').style.display = 'block';
-            document.getElementById('proximo-nivel').style.display = 'none';
-            document.getElementById('reiniciar-nivel').style.display = 'none';
-
-            // Atualizar barra de progresso
-            const progresso = (numeroNivel / 10) * 100;
-            document.getElementById('progress-fill').style.width = progresso + '%';
-            document.getElementById('progresso-text').textContent = Math.round(progresso) + '%';
-
-            // Criar campos de entrada específicos do nível
-            criarCamposEntrada(nivel);
-
-            // Criar objetos 3D específicos do nível
-            criarObjetosDonivel(nivel);
-        }
-
-        /**
-         * Cria os campos de entrada de dados específicos de cada nível
-         */
-        function criarCamposEntrada(nivel) {
-            const inputFields = document.getElementById('input-fields');
-            inputFields.innerHTML = '';
-
-            switch (nivel.tipo) {
-                case 'multipla-escolha':
-                    nivel.opcoes.forEach((opcao, index) => {
-                        const div = document.createElement('div');
-                        div.className = 'input-group';
-                        div.innerHTML = `
-                            <label>
-                                <input type="radio" name="resposta" value="${index}"> ${opcao}
-                            </label>
-                        `;
-                        inputFields.appendChild(div);
-                    });
-                    break;
-
-                case 'coordenadas-3d':
-                    const coordDiv = document.createElement('div');
-                    coordDiv.className = 'input-group';
-                    coordDiv.innerHTML = `
-                        <label>Coordenada X:</label>
-                        <input type="number" id="coord-x" placeholder="Ex: 3" step="0.1">
-                        <label>Coordenada Y:</label>
-                        <input type="number" id="coord-y" placeholder="Ex: 4" step="0.1">
-                        <label>Coordenada Z:</label>
-                        <input type="number" id="coord-z" placeholder="Ex: 0" step="0.1">
-                    `;
-                    inputFields.appendChild(coordDiv);
-                    break;
-
-                case 'calculo-distancia':
-                case 'velocidade-media':
-                case 'conversao-unidades':
-                case 'posicao-final':
-                case 'velocidade-media-total':
-                    const calcDiv = document.createElement('div');
-                    calcDiv.className = 'input-group';
-                    calcDiv.innerHTML = `
-                        <label>${nivel.tipo === 'calculo-distancia' ? 'Distância Total (unidades):' : 
-                                nivel.tipo === 'velocidade-media' ? 'Velocidade Média (km/h):' :
-                                nivel.tipo === 'conversao-unidades' ? 'Velocidade (m/s):' :
-                                nivel.tipo === 'posicao-final' ? 'Posição Final (m):' :
-                                'Velocidade Média Total (km/h):'}</label>
-                        <input type="number" id="resposta-valor" placeholder="Insira o valor" step="0.1">
-                    `;
-                    inputFields.appendChild(calcDiv);
-                    break;
-
-                case 'deslocamento-3d':
-                    const deslDiv = document.createElement('div');
-                    deslDiv.className = 'input-group';
-                    deslDiv.innerHTML = `
-                        <label>Deslocamento ΔX:</label>
-                        <input type="number" id="desl-x" placeholder="Ex: 3" step="0.1">
-                        <label>Deslocamento ΔY:</label>
-                        <input type="number" id="desl-y" placeholder="Ex: 4" step="0.1">
-                        <label>Deslocamento ΔZ:</label>
-                        <input type="number" id="desl-z" placeholder="Ex: 5" step="0.1">
-                    `;
-                    inputFields.appendChild(deslDiv);
-                    break;
-
-                case 'distancia-vs-deslocamento':
-                    const dvdDiv = document.createElement('div');
-                    dvdDiv.className = 'input-group';
-                    dvdDiv.innerHTML = `
-                        <label>Distância Total Percorrida (km):</label>
-                        <input type="number" id="distancia-total" placeholder="Ex: 20" step="0.1">
-                        <label>Deslocamento (km):</label>
-                        <input type="number" id="deslocamento-valor" placeholder="Ex: 0" step="0.1">
-                    `;
-                    inputFields.appendChild(dvdDiv);
-                    break;
-
-                case 'velocidade-instantanea':
-                    nivel.opcoes.forEach((opcao, index) => {
-                        const div = document.createElement('div');
-                        div.className = 'input-group';
-                        div.innerHTML = `
-                            <label>
-                                <input type="radio" name="resposta" value="${index}"> ${opcao}
-                            </label>
-                        `;
-                        inputFields.appendChild(div);
-                    });
-                    break;
-            }
-        }
-
-        /**
-         * Cria os objetos 3D específicos de cada nível
-         */
-        function criarObjetosDonivel(nivel) {
-            switch (nivel.id) {
-                case 1:
-                    criarNivel1();
-                    break;
-                case 2:
-                    criarNivel2();
-                    break;
-                case 3:
-                    criarNivel3();
-                    break;
-                case 4:
-                    criarNivel4();
-                    break;
-                case 5:
-                    criarNivel5();
-                    break;
-                case 6:
-                    criarNivel6();
-                    break;
-                case 7:
-                    criarNivel7();
-                    break;
-                case 8:
-                    criarNivel8();
-                    break;
-                case 9:
-                    criarNivel9();
-                    break;
-                case 10:
-                    criarNivel10();
-                    break;
-            }
-        }
-
-        /**
-         * Nível 1: Referencial e Repouso/Movimento
-         */
-        function criarNivel1() {
-            // Sonda (referencial móvel)
-            const sondaGeometry = new THREE.SphereGeometry(0.5, 32, 32);
-            const sondaMaterial = new THREE.MeshStandardMaterial({ color: 0xff6b6b });
-            const sonda = new THREE.Mesh(sondaGeometry, sondaMaterial);
-            sonda.position.set(0, 0, 0);
-            sonda.castShadow = true;
-            scene.add(sonda);
-
-            // Objeto A (em repouso em relação à sonda)
-            const objAGeometry = new THREE.BoxGeometry(0.5, 0.5, 0.5);
-            const objAMaterial = new THREE.MeshStandardMaterial({ color: 0x4ecdc4 });
-            const objA = new THREE.Mesh(objAGeometry, objAMaterial);
-            objA.position.set(3, 0, 0);
-            objA.castShadow = true;
-            scene.add(objA);
-
-            // Objeto B (em movimento)
-            const objBGeometry = new THREE.BoxGeometry(0.5, 0.5, 0.5);
-            const objBMaterial = new THREE.MeshStandardMaterial({ color: 0xffe66d });
-            const objB = new THREE.Mesh(objBGeometry, objBMaterial);
-            objB.position.set(-3, 0, 0);
-            objB.castShadow = true;
-            scene.add(objB);
-
-            // Objeto C (em movimento)
-            const objCGeometry = new THREE.BoxGeometry(0.5, 0.5, 0.5);
-            const objCMaterial = new THREE.MeshStandardMaterial({ color: 0x95e1d3 });
-            const objC = new THREE.Mesh(objCGeometry, objCMaterial);
-            objC.position.set(0, 3, 0);
-            objC.castShadow = true;
-            scene.add(objC);
-
-            // Animar objetos B e C
-            let animationFrame = 0;
-            const originalAnimate = animate;
-            animate = function() {
-                animationFrame++;
-                objB.position.x = -3 + Math.sin(animationFrame * 0.01) * 2;
-                objC.position.y = 3 + Math.cos(animationFrame * 0.01) * 1.5;
-                originalAnimate();
-            };
-        }
-
-        /**
-         * Nível 2: Posição e Referencial
-         */
-        function criarNivel2() {
-            // Ponto A (origem)
-            const pontoAGeometry = new THREE.SphereGeometry(0.3, 32, 32);
-            const pontoAMaterial = new THREE.MeshStandardMaterial({ color: 0xff6b6b });
-            const pontoA = new THREE.Mesh(pontoAGeometry, pontoAMaterial);
-            pontoA.position.set(0, 0, 0);
-            pontoA.castShadow = true;
-            scene.add(pontoA);
-
-            // Esfera de referência (raio de 5 unidades)
-            const esferaGeometry = new THREE.SphereGeometry(5, 32, 32);
-            const esferaMaterial = new THREE.MeshStandardMaterial({ 
-                color: 0x3498db, 
-                wireframe: true, 
-                transparent: true, 
-                opacity: 0.3 
-            });
-            const esfera = new THREE.Mesh(esferaGeometry, esferaMaterial);
-            scene.add(esfera);
-
-            // Ponto B (será ajustado pelo jogador)
-            const pontoBGeometry = new THREE.SphereGeometry(0.3, 32, 32);
-            const pontoBMaterial = new THREE.MeshStandardMaterial({ color: 0x4ecdc4 });
-            const pontoB = new THREE.Mesh(pontoBGeometry, pontoBMaterial);
-            pontoB.position.set(3, 4, 0);
-            pontoB.castShadow = true;
-            scene.add(pontoB);
-        }
-
-        /**
-         * Nível 3: Trajetória vs. Distância
-         */
-        function criarNivel3() {
-            // Criar um labirinto simples com caixas
-            const paredes = [
-                { pos: [0, 0, -5], scale: [10, 0.5, 1] },
-                { pos: [5, 0, 0], scale: [1, 0.5, 10] },
-                { pos: [-5, 0, 0], scale: [1, 0.5, 10] },
-                { pos: [0, 0, 5], scale: [10, 0.5, 1] },
-                { pos: [2, 0, -2], scale: [1, 0.5, 3] },
-                { pos: [-2, 0, 2], scale: [3, 0.5, 1] }
-            ];
-
-            paredes.forEach(parede => {
-                const geometry = new THREE.BoxGeometry(...parede.scale);
-                const material = new THREE.MeshStandardMaterial({ color: 0x95a5a6 });
-                const mesh = new THREE.Mesh(geometry, material);
-                mesh.position.set(...parede.pos);
-                mesh.castShadow = true;
-                scene.add(mesh);
-            });
-
-            // Ponto inicial
-            const inicioGeometry = new THREE.SphereGeometry(0.3, 32, 32);
-            const inicioMaterial = new THREE.MeshStandardMaterial({ color: 0x2ecc71 });
-            const inicio = new THREE.Mesh(inicioGeometry, inicioMaterial);
-            inicio.position.set(-4, 0.5, -4);
-            scene.add(inicio);
-
-            // Ponto final
-            const fimGeometry = new THREE.SphereGeometry(0.3, 32, 32);
-            const fimMaterial = new THREE.MeshStandardMaterial({ color: 0xe74c3c });
-            const fim = new THREE.Mesh(fimGeometry, fimMaterial);
-            fim.position.set(4, 0.5, 4);
-            scene.add(fim);
-        }
-
-        /**
-         * Nível 4: Deslocamento (Vetorial)
-         */
-        function criarNivel4() {
-            // Ponto A
-            const pontoAGeometry = new THREE.SphereGeometry(0.3, 32, 32);
-            const pontoAMaterial = new THREE.MeshStandardMaterial({ color: 0x2ecc71 });
-            const pontoA = new THREE.Mesh(pontoAGeometry, pontoAMaterial);
-            pontoA.position.set(0, 0, 0);
-            scene.add(pontoA);
-
-            // Ponto B
-            const pontoBGeometry = new THREE.SphereGeometry(0.3, 32, 32);
-            const pontoBMaterial = new THREE.MeshStandardMaterial({ color: 0xe74c3c });
-            const pontoB = new THREE.Mesh(pontoBGeometry, pontoBMaterial);
-            pontoB.position.set(3, 4, 5);
-            scene.add(pontoB);
-
-            // Linha conectando A a B (vetor deslocamento)
-            const lineGeometry = new THREE.BufferGeometry();
-            lineGeometry.setAttribute('position', new THREE.BufferAttribute(
-                new Float32Array([0, 0, 0, 3, 4, 5]),
-                3
-            ));
-            const lineMaterial = new THREE.LineBasicMaterial({ color: 0x3498db, linewidth: 2 });
-            const line = new THREE.Line(lineGeometry, lineMaterial);
-            scene.add(line);
-        }
-
-        /**
-         * Nível 5: Distância vs. Deslocamento
-         */
-        function criarNivel5() {
-            // Ponto A
-            const pontoAGeometry = new THREE.SphereGeometry(0.3, 32, 32);
-            const pontoAMaterial = new THREE.MeshStandardMaterial({ color: 0x2ecc71 });
-            const pontoA = new THREE.Mesh(pontoAGeometry, pontoAMaterial);
-            pontoA.position.set(0, 0, 0);
-            scene.add(pontoA);
-
-            // Ponto B
-            const pontoBGeometry = new THREE.SphereGeometry(0.3, 32, 32);
-            const pontoBMaterial = new THREE.MeshStandardMaterial({ color: 0xe74c3c });
-            const pontoB = new THREE.Mesh(pontoBGeometry, pontoBMaterial);
-            pontoB.position.set(10, 0, 0);
-            scene.add(pontoB);
-
-            // Caminho de ida e volta
-            const caminhoGeometry = new THREE.BufferGeometry();
-            caminhoGeometry.setAttribute('position', new THREE.BufferAttribute(
-                new Float32Array([0, 0, 0, 10, 0, 0, 0, 0, 0]),
-                3
-            ));
-            const caminhoMaterial = new THREE.LineBasicMaterial({ color: 0xf39c12, linewidth: 2 });
-            const caminho = new THREE.Line(caminhoGeometry, caminhoMaterial);
-            scene.add(caminho);
-        }
-
-        /**
-         * Nível 6: Velocidade Média (Cálculo)
-         */
-        function criarNivel6() {
-            // Ponto inicial
-            const inicioGeometry = new THREE.SphereGeometry(0.3, 32, 32);
-            const inicioMaterial = new THREE.MeshStandardMaterial({ color: 0x2ecc71 });
-            const inicio = new THREE.Mesh(inicioGeometry, inicioMaterial);
-            inicio.position.set(-5, 0, 0);
-            scene.add(inicio);
-
-            // Ponto final
-            const fimGeometry = new THREE.SphereGeometry(0.3, 32, 32);
-            const fimMaterial = new THREE.MeshStandardMaterial({ color: 0xe74c3c });
-            const fim = new THREE.Mesh(fimGeometry, fimMaterial);
-            fim.position.set(5, 0, 0);
-            scene.add(fim);
-
-            // Caminho
-            const caminhoGeometry = new THREE.BufferGeometry();
-            caminhoGeometry.setAttribute('position', new THREE.BufferAttribute(
-                new Float32Array([-5, 0, 0, 5, 0, 0]),
-                3
-            ));
-            const caminhoMaterial = new THREE.LineBasicMaterial({ color: 0x3498db, linewidth: 2 });
-            const caminho = new THREE.Line(caminhoGeometry, caminhoMaterial);
-            scene.add(caminho);
-        }
-
-        /**
-         * Nível 7: Unidades de Medida
-         */
-        function criarNivel7() {
-            // Similar ao nível 6, mas com foco em conversão
-            const inicioGeometry = new THREE.SphereGeometry(0.3, 32, 32);
-            const inicioMaterial = new THREE.MeshStandardMaterial({ color: 0x2ecc71 });
-            const inicio = new THREE.Mesh(inicioGeometry, inicioMaterial);
-            inicio.position.set(-5, 0, 0);
-            scene.add(inicio);
-
-            const fimGeometry = new THREE.SphereGeometry(0.3, 32, 32);
-            const fimMaterial = new THREE.MeshStandardMaterial({ color: 0xe74c3c });
-            const fim = new THREE.Mesh(fimGeometry, fimMaterial);
-            fim.position.set(5, 0, 0);
-            scene.add(fim);
-
-            const caminhoGeometry = new THREE.BufferGeometry();
-            caminhoGeometry.setAttribute('position', new THREE.BufferAttribute(
-                new Float32Array([-5, 0, 0, 5, 0, 0]),
-                3
-            ));
-            const caminhoMaterial = new THREE.LineBasicMaterial({ color: 0x3498db, linewidth: 2 });
-            const caminho = new THREE.Line(caminhoGeometry, caminhoMaterial);
-            scene.add(caminho);
-        }
-
-        /**
-         * Nível 8: Movimento Retilíneo Uniforme (MRU)
-         */
-        function criarNivel8() {
-            // Ponto inicial (S0 = 10m)
-            const inicioGeometry = new THREE.SphereGeometry(0.3, 32, 32);
-            const inicioMaterial = new THREE.MeshStandardMaterial({ color: 0x2ecc71 });
-            const inicio = new THREE.Mesh(inicioGeometry, inicioMaterial);
-            inicio.position.set(2, 0, 0);
-            scene.add(inicio);
-
-            // Eixo de movimento
-            const eixoGeometry = new THREE.BufferGeometry();
-            eixoGeometry.setAttribute('position', new THREE.BufferAttribute(
-                new Float32Array([-5, 0, 0, 5, 0, 0]),
-                3
-            ));
-            const eixoMaterial = new THREE.LineBasicMaterial({ color: 0x95a5a6, linewidth: 1 });
-            const eixo = new THREE.Line(eixoGeometry, eixoMaterial);
-            scene.add(eixo);
-
-            // Marcas de distância
-            for (let i = -5; i <= 5; i += 1) {
-                const marcaGeometry = new THREE.BoxGeometry(0.1, 0.2, 0.1);
-                const marcaMaterial = new THREE.MeshStandardMaterial({ color: 0xbdc3c7 });
-                const marca = new THREE.Mesh(marcaGeometry, marcaMaterial);
-                marca.position.set(i, -0.5, 0);
-                scene.add(marca);
-            }
-        }
-
-        /**
-         * Nível 9: Velocidade Instantânea
-         */
-        function criarNivel9() {
-            // Criar 5 pontos ao longo de um caminho
-            const pontos = [
-                { pos: [-4, 0, 0], vel: 1 },
-                { pos: [-2, 0, 0], vel: 2 },
-                { pos: [0, 0, 0], vel: 3 },
-                { pos: [2, 0, 0], vel: 2 },
-                { pos: [4, 0, 0], vel: 1 }
-            ];
-
-            pontos.forEach((ponto, index) => {
-                const geometry = new THREE.SphereGeometry(0.3, 32, 32);
-                const material = new THREE.MeshStandardMaterial({ color: 0x3498db });
-                const mesh = new THREE.Mesh(geometry, material);
-                mesh.position.set(...ponto.pos);
-                mesh.userData.velocidade = ponto.vel;
-                mesh.userData.indice = index;
-                scene.add(mesh);
-            });
-
-            // Caminho
-            const caminhoGeometry = new THREE.BufferGeometry();
-            const posicoes = [];
-            pontos.forEach(p => posicoes.push(...p.pos));
-            caminhoGeometry.setAttribute('position', new THREE.BufferAttribute(
-                new Float32Array(posicoes),
-                3
-            ));
-            const caminhoMaterial = new THREE.LineBasicMaterial({ color: 0x95a5a6, linewidth: 2 });
-            const caminho = new THREE.Line(caminhoGeometry, caminhoMaterial);
-            scene.add(caminho);
-        }
-
-        /**
-         * Nível 10: Aplicação Integrada
-         */
-        function criarNivel10() {
-            // Trecho 1
-            const trecho1InicioGeometry = new THREE.SphereGeometry(0.3, 32, 32);
-            const trecho1InicioMaterial = new THREE.MeshStandardMaterial({ color: 0x2ecc71 });
-            const trecho1Inicio = new THREE.Mesh(trecho1InicioGeometry, trecho1InicioMaterial);
-            trecho1Inicio.position.set(-5, 0, 0);
-            scene.add(trecho1Inicio);
-
-            // Trecho 1 fim / Trecho 2 início
-            const meioPontoGeometry = new THREE.SphereGeometry(0.3, 32, 32);
-            const meioPontoMaterial = new THREE.MeshStandardMaterial({ color: 0xf39c12 });
-            const meioPonto = new THREE.Mesh(meioPontoGeometry, meioPontoMaterial);
-            meioPonto.position.set(0, 0, 0);
-            scene.add(meioPonto);
-
-            // Trecho 2 fim
-            const trecho2FimGeometry = new THREE.SphereGeometry(0.3, 32, 32);
-            const trecho2FimMaterial = new THREE.MeshStandardMaterial({ color: 0xe74c3c });
-            const trecho2Fim = new THREE.Mesh(trecho2FimGeometry, trecho2FimMaterial);
-            trecho2Fim.position.set(6, 0, 0);
-            scene.add(trecho2Fim);
-
-            // Caminhos
-            const trecho1Geometry = new THREE.BufferGeometry();
-            trecho1Geometry.setAttribute('position', new THREE.BufferAttribute(
-                new Float32Array([-5, 0, 0, 0, 0, 0]),
-                3
-            ));
-            const trecho1Material = new THREE.LineBasicMaterial({ color: 0x3498db, linewidth: 2 });
-            const trecho1 = new THREE.Line(trecho1Geometry, trecho1Material);
-            scene.add(trecho1);
-
-            const trecho2Geometry = new THREE.BufferGeometry();
-            trecho2Geometry.setAttribute('position', new THREE.BufferAttribute(
-                new Float32Array([0, 0, 0, 6, 0, 0]),
-                3
-            ));
-            const trecho2Material = new THREE.LineBasicMaterial({ color: 0x9b59b6, linewidth: 2 });
-            const trecho2 = new THREE.Line(trecho2Geometry, trecho2Material);
-            scene.add(trecho2);
-        }
-
-        /**
-         * Valida a resposta do jogador e fornece feedback
-         */
-        function validarResposta() {
-            const nivel = niveis[nivelAtual - 1];
-            const feedbackElement = document.getElementById('feedback-text');
-            let resposta = null;
-            let acertou = false;
-
-            switch (nivel.tipo) {
-                case 'multipla-escolha':
-                case 'velocidade-instantanea':
-                    const radioSelecionado = document.querySelector('input[name="resposta"]:checked');
-                    if (!radioSelecionado) {
-                        feedbackElement.textContent = 'Por favor, selecione uma opção.';
-                        feedbackElement.className = 'feedback error';
-                        return;
-                    }
-                    resposta = parseInt(radioSelecionado.value);
-                    acertou = resposta === nivel.respostaCorreta || resposta === nivel.pontoCorreto;
-                    break;
-
-                case 'coordenadas-3d':
-                    const x = parseFloat(document.getElementById('coord-x').value);
-                    const y = parseFloat(document.getElementById('coord-y').value);
-                    const z = parseFloat(document.getElementById('coord-z').value);
-                    if (isNaN(x) || isNaN(y) || isNaN(z)) {
-                        feedbackElement.textContent = 'Por favor, insira valores válidos para X, Y e Z.';
-                        feedbackElement.className = 'feedback error';
-                        return;
-                    }
-                    const distancia = Math.sqrt(x * x + y * y + z * z);
-                    acertou = Math.abs(distancia - 5) <= nivel.tolerancia;
-                    resposta = { x, y, z, distancia };
-                    break;
-
-                case 'calculo-distancia':
-                case 'velocidade-media':
-                case 'conversao-unidades':
-                case 'posicao-final':
-                case 'velocidade-media-total':
-                    const valor = parseFloat(document.getElementById('resposta-valor').value);
-                    if (isNaN(valor)) {
-                        feedbackElement.textContent = 'Por favor, insira um valor válido.';
-                        feedbackElement.className = 'feedback error';
-                        return;
-                    }
-                    const valorCorreto = nivel.tipo === 'calculo-distancia' ? nivel.distanciaCorreta :
-                                          nivel.tipo === 'velocidade-media' ? nivel.velocidadeCorreta :
-                                          nivel.tipo === 'conversao-unidades' ? nivel.velocidadeCorreta :
-                                          nivel.tipo === 'posicao-final' ? nivel.posicaoCorreta :
-                                          nivel.velocidadeCorreta;
-                    acertou = Math.abs(valor - valorCorreto) <= nivel.tolerancia;
-                    resposta = valor;
-                    break;
-
-                case 'deslocamento-3d':
-                    const dx = parseFloat(document.getElementById('desl-x').value);
-                    const dy = parseFloat(document.getElementById('desl-y').value);
-                    const dz = parseFloat(document.getElementById('desl-z').value);
-                    if (isNaN(dx) || isNaN(dy) || isNaN(dz)) {
-                        feedbackElement.textContent = 'Por favor, insira valores válidos para ΔX, ΔY e ΔZ.';
-                        feedbackElement.className = 'feedback error';
-                        return;
-                    }
-                    acertou = Math.abs(dx - nivel.deslocamento.x) <= nivel.tolerancia &&
-                              Math.abs(dy - nivel.deslocamento.y) <= nivel.tolerancia &&
-                              Math.abs(dz - nivel.deslocamento.z) <= nivel.tolerancia;
-                    resposta = { dx, dy, dz };
-                    break;
-
-                case 'distancia-vs-deslocamento':
-                    const distTotal = parseFloat(document.getElementById('distancia-total').value);
-                    const desl = parseFloat(document.getElementById('deslocamento-valor').value);
-                    if (isNaN(distTotal) || isNaN(desl)) {
-                        feedbackElement.textContent = 'Por favor, insira valores válidos.';
-                        feedbackElement.className = 'feedback error';
-                        return;
-                    }
-                    acertou = Math.abs(distTotal - nivel.distanciaTotal) <= nivel.tolerancia &&
-                              Math.abs(desl - nivel.deslocamento) <= nivel.tolerancia;
-                    resposta = { distTotal, desl };
-                    break;
-            }
-
-            // Fornecer feedback
-            if (acertou) {
-                feedbackElement.textContent = '✓ Resposta correta! Parabéns!';
-                feedbackElement.className = 'feedback success';
-                nivelConcluido = true;
-                pontuacao += 10;
-
-                // Mostrar botão de próximo nível
-                document.getElementById('enviar-resposta').style.display = 'none';
-                if (nivelAtual < 10) {
-                    document.getElementById('proximo-nivel').style.display = 'block';
-                } else {
-                    document.getElementById('proximo-nivel').textContent = 'Jogo Concluído!';
-                    document.getElementById('proximo-nivel').style.display = 'block';
-                }
-            } else {
-                feedbackElement.textContent = '✗ Resposta incorreta. Tente novamente!';
-                feedbackElement.className = 'feedback error';
-                document.getElementById('reiniciar-nivel').style.display = 'block';
-            }
-        }
-
-        /**
-         * Avança para o próximo nível
-         */
-        function proximoNivel() {
-            if (nivelAtual < 10) {
-                carregarNivel(nivelAtual + 1);
-            } else {
-                // Jogo concluído
-                alert(`Parabéns! Você completou o jogo! Pontuação final: ${pontuacao}`);
-                carregarNivel(1);
-            }
-        }
-
-        /**
-         * Reinicia o nível atual
-         */
-        function reiniciarNivel() {
-            carregarNivel(nivelAtual);
-        }
-
-        /**
-         * Anima a cena
-         */
         function animate() {
             requestAnimationFrame(animate);
-            renderer.render(scene, camera);
+
+            // Atualizar cena
+            if (gameState.scene) {
+                // Rotacionar carros/veículos se existirem
+                gameState.scene.children.forEach(child => {
+                    if (child.userData.isVehicle && child.userData.animate) {
+                        child.userData.animate(child);
+                    }
+                });
+            }
+
+            gameState.renderer.render(gameState.scene, gameState.camera);
         }
 
-        /**
-         * Redimensiona a janela
-         */
-        function onWindowResize() {
-            const container = document.getElementById('canvas-container');
-            const width = container.clientWidth;
-            const height = container.clientHeight;
+        // ============================================================================
+        // GERENCIAMENTO DE FASES
+        // ============================================================================
 
-            camera.aspect = width / height;
-            camera.updateProjectionMatrix();
+        function loadPhase(phaseIndex) {
+            if (phaseIndex >= phases.length) {
+                endGame();
+                return;
+            }
 
-            renderer.setSize(width, height);
+            // Limpar cena anterior
+            while (gameState.scene.children.length > 0) {
+                gameState.scene.remove(gameState.scene.children[0]);
+            }
+
+            // Re-adicionar iluminação e céu
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+            gameState.scene.add(ambientLight);
+
+            const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+            directionalLight.position.set(10, 20, 10);
+            directionalLight.castShadow = true;
+            directionalLight.shadow.mapSize.width = 2048;
+            directionalLight.shadow.mapSize.height = 2048;
+            gameState.scene.add(directionalLight);
+
+            const groundGeometry = new THREE.PlaneGeometry(200, 100);
+            const groundMaterial = new THREE.MeshLambertMaterial({ color: 0x8b7355 });
+            const ground = new THREE.Mesh(groundGeometry, groundMaterial);
+            ground.rotation.x = -Math.PI / 2;
+            ground.receiveShadow = true;
+            gameState.scene.add(ground);
+
+            const skyGeometry = new THREE.SphereGeometry(500, 32, 32);
+            const skyMaterial = new THREE.MeshBasicMaterial({
+                color: 0x87ceeb,
+                side: THREE.BackSide
+            });
+            const sky = new THREE.Mesh(skyGeometry, skyMaterial);
+            gameState.scene.add(sky);
+
+            // Carregar dados da fase
+            gameState.currentPhase = phaseIndex;
+            gameState.phaseData = phases[phaseIndex];
+
+            // Atualizar UI
+            document.getElementById('phaseNumber').textContent = phaseIndex + 1;
+            document.getElementById('phaseCount').textContent = (phaseIndex + 1) + '/5';
+            document.getElementById('phaseDescription').textContent = gameState.phaseData.description;
+            document.getElementById('phaseIndicator').textContent = gameState.phaseData.title;
+            document.getElementById('inputHint').textContent = '💡 ' + gameState.phaseData.hint;
+
+            // Limpar input
+            document.getElementById('gameInput').value = '';
+            document.getElementById('feedbackMessage').style.display = 'none';
+
+            // Criar cena 3D da fase
+            createPhaseScene(phaseIndex);
+
+            // Calcular resposta correta
+            if (gameState.phaseData.type === 'average_velocity') {
+                const v1 = gameState.phaseData.data.trecho1.distance / gameState.phaseData.data.trecho1.time;
+                const v2 = gameState.phaseData.data.trecho2.distance / gameState.phaseData.data.trecho2.time;
+                gameState.correctAnswer = (v1 + v2) / 2;
+            } else if (gameState.phaseData.type === 'velocity') {
+                gameState.correctAnswer = gameState.phaseData.data.distance / gameState.phaseData.data.time;
+            }
         }
 
-        // Event listeners
-        document.addEventListener('DOMContentLoaded', () => {
-            inicializarCena3D();
+        function createPhaseScene(phaseIndex) {
+            if (phaseIndex === 0) {
+                createPhase1Scene();
+            } else if (phaseIndex === 1) {
+                createPhase2Scene();
+            } else if (phaseIndex === 2) {
+                createPhase3Scene();
+            } else if (phaseIndex === 3) {
+                createPhase4Scene();
+            } else if (phaseIndex === 4) {
+                createPhase5Scene();
+            }
+        }
 
-            document.getElementById('enviar-resposta').addEventListener('click', validarResposta);
-            document.getElementById('proximo-nivel').addEventListener('click', proximoNivel);
-            document.getElementById('reiniciar-nivel').addEventListener('click', reiniciarNivel);
-        });
+        function createPhase1Scene() {
+            // Fase 1: Carro em dois trechos
+            
+            // Trecho 1 - Carro vermelho
+            const car1 = createCar(0xcc0000);
+            car1.position.set(-30, 0.5, 0);
+            gameState.scene.add(car1);
+
+            // Placa de velocidade para Trecho 1
+            createSpeedSign(100, -40, 0, "100 km/h");
+
+            // Trecho 2 - Carro azul
+            const car2 = createCar(0x0066cc);
+            car2.position.set(30, 0.5, 0);
+            gameState.scene.add(car2);
+
+            // Placa de velocidade para Trecho 2
+            createSpeedSign(120, 40, 0, "120 km/h");
+
+            // Estrada
+            createRoad(-60, 60, 0);
+
+            // Câmera
+            gameState.camera.position.set(0, 8, 20);
+            gameState.camera.lookAt(0, 0, 0);
+        }
+
+        function createPhase2Scene() {
+            // Fase 2: Caminhão percorrendo distância
+            
+            const truck = createTruck();
+            truck.position.set(-40, 0.5, 0);
+            gameState.scene.add(truck);
+
+            // Marcadores de distância
+            createDistanceMarker(-40, 0, 0, "0m");
+            createDistanceMarker(40, 0, 0, "150m");
+
+            // Placa com tempo
+            createSignWithText("30 segundos", 0, 5, -20);
+
+            // Estrada
+            createRoad(-50, 50, 0);
+
+            gameState.camera.position.set(0, 8, 25);
+            gameState.camera.lookAt(0, 0, 0);
+        }
+
+        function createPhase3Scene() {
+            // Fase 3: Veículo em estrada longa
+            
+            const car = createCar(0x00aa00);
+            car.position.set(-80, 0.5, 0);
+            gameState.scene.add(car);
+
+            // Marcadores de distância
+            createDistanceMarker(-80, 0, 0, "0 km");
+            createDistanceMarker(80, 0, 0, "200 km");
+
+            // Placa com tempo
+            createSignWithText("4 horas", 0, 5, -30);
+
+            // Estrada
+            createRoad(-100, 100, 0);
+
+            gameState.camera.position.set(0, 10, 30);
+            gameState.camera.lookAt(0, 0, 0);
+        }
+
+        function createPhase4Scene() {
+            // Fase 4: Drone voando
+            
+            const drone = createDrone();
+            drone.position.set(-50, 10, 0);
+            gameState.scene.add(drone);
+
+            // Marcadores de distância
+            createDistanceMarker(-50, 8, 0, "0m");
+            createDistanceMarker(50, 8, 0, "9000m");
+
+            // Placa com tempo
+            createSignWithText("300 segundos", 0, 15, -40);
+
+            // Estrada
+            createRoad(-60, 60, 0);
+
+            gameState.camera.position.set(0, 15, 30);
+            gameState.camera.lookAt(0, 5, 0);
+        }
+
+        function createPhase5Scene() {
+            // Fase 5: Carro em estrada
+            
+            const car = createCar(0xffaa00);
+            car.position.set(-100, 0.5, 0);
+            gameState.scene.add(car);
+
+            // Marcadores de distância
+            createDistanceMarker(-100, 0, 0, "0 km");
+            createDistanceMarker(100, 0, 0, "300 km");
+
+            // Placa com tempo
+            createSignWithText("6 horas", 0, 5, -40);
+
+            // Estrada
+            createRoad(-120, 120, 0);
+
+            gameState.camera.position.set(0, 10, 35);
+            gameState.camera.lookAt(0, 0, 0);
+        }
+
+        // ============================================================================
+        // OBJETOS 3D
+        // ============================================================================
+
+        function createCar(color = 0xff0000) {
+            const group = new THREE.Group();
+            group.userData.isVehicle = true;
+
+            // Corpo do carro
+            const bodyGeometry = new THREE.BoxGeometry(2, 1, 4);
+            const bodyMaterial = new THREE.MeshPhongMaterial({ color });
+            const body = new THREE.Mesh(bodyGeometry, bodyMaterial);
+            body.position.y = 0.5;
+            body.castShadow = true;
+            body.receiveShadow = true;
+            group.add(body);
+
+            // Teto
+            const roofGeometry = new THREE.BoxGeometry(1.8, 0.8, 2);
+            const roofMaterial = new THREE.MeshPhongMaterial({ color });
+            const roof = new THREE.Mesh(roofGeometry, roofMaterial);
+            roof.position.set(0, 1.4, -0.3);
+            roof.castShadow = true;
+            roof.receiveShadow = true;
+            group.add(roof);
+
+            // Rodas
+            for (let i = 0; i < 4; i++) {
+                const wheel = createWheel();
+                wheel.position.x = (i < 2 ? -1 : 1);
+                wheel.position.y = 0.4;
+                wheel.position.z = (i % 2 === 0 ? -1.2 : 1.2);
+                group.add(wheel);
+            }
+
+            // Faróis
+            const lightGeometry = new THREE.SphereGeometry(0.2, 8, 8);
+            const lightMaterial = new THREE.MeshPhongMaterial({ color: 0xffff00 });
+            const light1 = new THREE.Mesh(lightGeometry, lightMaterial);
+            light1.position.set(-0.7, 0.7, 2);
+            const light2 = new THREE.Mesh(lightGeometry, lightMaterial);
+            light2.position.set(0.7, 0.7, 2);
+            group.add(light1);
+            group.add(light2);
+
+            return group;
+        }
+
+        function createTruck() {
+            const group = new THREE.Group();
+            group.userData.isVehicle = true;
+
+            // Cabine
+            const cabineGeometry = new THREE.BoxGeometry(2, 1.5, 2);
+            const cabineMaterial = new THREE.MeshPhongMaterial({ color: 0xff6600 });
+            const cabine = new THREE.Mesh(cabineGeometry, cabineMaterial);
+            cabine.position.set(-1, 0.75, 0);
+            cabine.castShadow = true;
+            cabine.receiveShadow = true;
+            group.add(cabine);
+
+            // Carroceria
+            const bodyGeometry = new THREE.BoxGeometry(2.5, 2, 5);
+            const bodyMaterial = new THREE.MeshPhongMaterial({ color: 0xcc0000 });
+            const body = new THREE.Mesh(bodyGeometry, bodyMaterial);
+            body.position.set(1.5, 1, 0);
+            body.castShadow = true;
+            body.receiveShadow = true;
+            group.add(body);
+
+            // Rodas
+            for (let i = 0; i < 6; i++) {
+                const wheel = createWheel(0.5);
+                wheel.position.x = (i < 3 ? -1.5 : 1.5);
+                wheel.position.y = 0.5;
+                wheel.position.z = (i % 3 - 1) * 1.5;
+                group.add(wheel);
+            }
+
+            return group;
+        }
+
+        function createDrone() {
+            const group = new THREE.Group();
+            group.userData.isVehicle = true;
+
+            // Corpo central
+            const bodyGeometry = new THREE.BoxGeometry(0.3, 0.2, 0.3);
+            const bodyMaterial = new THREE.MeshPhongMaterial({ color: 0x333333 });
+            const body = new THREE.Mesh(bodyGeometry, bodyMaterial);
+            body.castShadow = true;
+            body.receiveShadow = true;
+            group.add(body);
+
+            // Braços
+            for (let i = 0; i < 4; i++) {
+                const armGeometry = new THREE.CylinderGeometry(0.05, 0.05, 1);
+                const armMaterial = new THREE.MeshPhongMaterial({ color: 0x666666 });
+                const arm = new THREE.Mesh(armGeometry, armMaterial);
+                arm.rotation.z = Math.PI / 4 + (i * Math.PI / 2);
+                arm.position.set(
+                    Math.cos(i * Math.PI / 2) * 0.3,
+                    0,
+                    Math.sin(i * Math.PI / 2) * 0.3
+                );
+                group.add(arm);
+
+                // Hélices
+                const propeller = createPropeller();
+                propeller.position.set(
+                    Math.cos(i * Math.PI / 2) * 0.5,
+                    0.5,
+                    Math.sin(i * Math.PI / 2) * 0.5
+                );
+                group.add(propeller);
+            }
+
+            // Câmera
+            const cameraGeometry = new THREE.SphereGeometry(0.1, 8, 8);
+            const cameraMaterial = new THREE.MeshPhongMaterial({ color: 0x000000 });
+            const camera = new THREE.Mesh(cameraGeometry, cameraMaterial);
+            camera.position.y = -0.15;
+            group.add(camera);
+
+            // Animação
+            group.userData.animate = (obj) => {
+                obj.children.forEach((child, index) => {
+                    if (child.userData.isPropeller) {
+                        child.rotation.x += 0.3;
+                    }
+                });
+            };
+
+            return group;
+        }
+
+        function createPropeller() {
+            const group = new THREE.Group();
+            group.userData.isPropeller = true;
+
+            const bladeGeometry = new THREE.BoxGeometry(0.8, 0.05, 0.1);
+            const bladeMaterial = new THREE.MeshPhongMaterial({ color: 0xaaaaaa });
+
+            for (let i = 0; i < 2; i++) {
+                const blade = new THREE.Mesh(bladeGeometry, bladeMaterial);
+                blade.rotation.z = i * Math.PI / 2;
+                blade.castShadow = true;
+                group.add(blade);
+            }
+
+            return group;
+        }
+
+        function createWheel(scale = 0.4) {
+            const wheelGeometry = new THREE.CylinderGeometry(scale, scale, 0.3, 16);
+            const wheelMaterial = new THREE.MeshPhongMaterial({ color: 0x333333 });
+            const wheel = new THREE.Mesh(wheelGeometry, wheelMaterial);
+            wheel.rotation.z = Math.PI / 2;
+            wheel.castShadow = true;
+            wheel.receiveShadow = true;
+            return wheel;
+        }
+
+        function createRoad(startX, endX, z) {
+            const roadGeometry = new THREE.PlaneGeometry(endX - startX, 4);
+            const roadMaterial = new THREE.MeshLambertMaterial({ color: 0x333333 });
+            const road = new THREE.Mesh(roadGeometry, roadMaterial);
+            road.rotation.x = -Math.PI / 2;
+            road.position.set((startX + endX) / 2, 0.01, z);
+            road.receiveShadow = true;
+            gameState.scene.add(road);
+
+            // Linhas de marcação
+            const lineGeometry = new THREE.PlaneGeometry(endX - startX, 0.2);
+            const lineMaterial = new THREE.MeshLambertMaterial({ color: 0xffff00 });
+            const line = new THREE.Mesh(lineGeometry, lineMaterial);
+            line.rotation.x = -Math.PI / 2;
+            line.position.set((startX + endX) / 2, 0.02, z);
+            gameState.scene.add(line);
+        }
+
+        function createSpeedSign(speed, x, z, text) {
+            const group = new THREE.Group();
+
+            // Poste
+            const poleGeometry = new THREE.CylinderGeometry(0.1, 0.1, 3);
+            const poleMaterial = new THREE.MeshPhongMaterial({ color: 0x8b4513 });
+            const pole = new THREE.Mesh(poleGeometry, poleMaterial);
+            pole.position.set(x, 1.5, z);
+            pole.castShadow = true;
+            group.add(pole);
+
+            // Placa
+            const signGeometry = new THREE.BoxGeometry(2, 1.5, 0.1);
+            const signMaterial = new THREE.MeshPhongMaterial({ color: 0xffffff });
+            const sign = new THREE.Mesh(signGeometry, signMaterial);
+            sign.position.set(x, 3.5, z);
+            sign.castShadow = true;
+            group.add(sign);
+
+            // Texto (usando canvas)
+            const canvas = document.createElement('canvas');
+            canvas.width = 256;
+            canvas.height = 192;
+            const ctx = canvas.getContext('2d');
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#000000';
+            ctx.font = 'bold 48px Arial';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(text, canvas.width / 2, canvas.height / 2);
+
+            const texture = new THREE.CanvasTexture(canvas);
+            const textMaterial = new THREE.MeshPhongMaterial({ map: texture });
+            const textMesh = new THREE.Mesh(signGeometry, textMaterial);
+            textMesh.position.set(x, 3.5, z + 0.06);
+            group.add(textMesh);
+
+            gameState.scene.add(group);
+        }
+
+        function createDistanceMarker(x, y, z, text) {
+            const group = new THREE.Group();
+
+            // Poste
+            const poleGeometry = new THREE.CylinderGeometry(0.08, 0.08, 2);
+            const poleMaterial = new THREE.MeshPhongMaterial({ color: 0x555555 });
+            const pole = new THREE.Mesh(poleGeometry, poleMaterial);
+            pole.position.set(x, 1, z);
+            group.add(pole);
+
+            // Bandeira
+            const flagGeometry = new THREE.PlaneGeometry(1, 0.6);
+            const flagMaterial = new THREE.MeshPhongMaterial({ color: 0xff0000 });
+            const flag = new THREE.Mesh(flagGeometry, flagMaterial);
+            flag.position.set(x + 0.5, 2.2, z);
+            group.add(flag);
+
+            // Texto
+            const canvas = document.createElement('canvas');
+            canvas.width = 128;
+            canvas.height = 76;
+            const ctx = canvas.getContext('2d');
+            ctx.fillStyle = '#ff0000';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#ffffff';
+            ctx.font = 'bold 24px Arial';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(text, canvas.width / 2, canvas.height / 2);
+
+            const texture = new THREE.CanvasTexture(canvas);
+            const textMaterial = new THREE.MeshPhongMaterial({ map: texture });
+            const textMesh = new THREE.Mesh(flagGeometry, textMaterial);
+            textMesh.position.set(x + 0.5, 2.2, z + 0.01);
+            group.add(textMesh);
+
+            gameState.scene.add(group);
+        }
+
+        function createSignWithText(text, x, y, z) {
+            const group = new THREE.Group();
+
+            // Poste
+            const poleGeometry = new THREE.CylinderGeometry(0.1, 0.1, y);
+            const poleMaterial = new THREE.MeshPhongMaterial({ color: 0x8b4513 });
+            const pole = new THREE.Mesh(poleGeometry, poleMaterial);
+            pole.position.set(x, y / 2, z);
+            group.add(pole);
+
+            // Placa
+            const signGeometry = new THREE.BoxGeometry(2.5, 1, 0.1);
+            const signMaterial = new THREE.MeshPhongMaterial({ color: 0xffff00 });
+            const sign = new THREE.Mesh(signGeometry, signMaterial);
+            sign.position.set(x, y, z);
+            group.add(sign);
+
+            // Texto
+            const canvas = document.createElement('canvas');
+            canvas.width = 320;
+            canvas.height = 128;
+            const ctx = canvas.getContext('2d');
+            ctx.fillStyle = '#ffff00';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#000000';
+            ctx.font = 'bold 40px Arial';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(text, canvas.width / 2, canvas.height / 2);
+
+            const texture = new THREE.CanvasTexture(canvas);
+            const textMaterial = new THREE.MeshPhongMaterial({ map: texture });
+            const textMesh = new THREE.Mesh(signGeometry, textMaterial);
+            textMesh.position.set(x, y, z + 0.06);
+            group.add(textMesh);
+
+            gameState.scene.add(group);
+        }
+
+        // ============================================================================
+        // SUBMISSÃO DE RESPOSTAS
+        // ============================================================================
+
+        function submitAnswer() {
+            const input = document.getElementById('gameInput');
+            const userAnswer = parseFloat(input.value);
+
+            if (isNaN(userAnswer)) {
+                alert('Por favor, digite um número válido!');
+                return;
+            }
+
+            // Verificar se a resposta está correta (com margem de erro de 0.5)
+            const tolerance = 0.5;
+            const isCorrect = Math.abs(userAnswer - gameState.correctAnswer) <= tolerance;
+
+            // Mostrar feedback
+            const feedbackMessage = document.getElementById('feedbackMessage');
+            const feedbackTitle = document.getElementById('feedbackTitle');
+            const feedbackText = document.getElementById('feedbackText');
+
+            if (isCorrect) {
+                feedbackMessage.classList.remove('error');
+                feedbackMessage.classList.add('success');
+                feedbackTitle.textContent = '✓ Parabéns!';
+                feedbackText.textContent = `Sua resposta está correta! ${gameState.phaseData.correctAnswer.toFixed(2)} ${gameState.phaseData.unit}`;
+                
+                // Adicionar pontuação
+                gameState.phaseScores[gameState.currentPhase] = gameState.phaseData.points;
+                gameState.score += gameState.phaseData.points;
+                document.getElementById('currentScore').textContent = gameState.score;
+            } else {
+                feedbackMessage.classList.remove('success');
+                feedbackMessage.classList.add('error');
+                feedbackTitle.textContent = '✗ Incorreto';
+                feedbackText.textContent = `A resposta correta é: ${gameState.correctAnswer.toFixed(2)} ${gameState.phaseData.unit}. Sua resposta: ${userAnswer.toFixed(2)}`;
+            }
+
+            feedbackMessage.style.display = 'block';
+            document.getElementById('gameInputArea').style.display = 'none';
+            document.getElementById('submitBtn').disabled = true;
+        }
+
+        function nextPhase() {
+            const currentPhaseIndex = gameState.currentPhase;
+            
+            if (currentPhaseIndex < phases.length - 1) {
+                loadPhase(currentPhaseIndex + 1);
+                document.getElementById('gameInputArea').style.display = 'block';
+                document.getElementById('submitBtn').disabled = false;
+            } else {
+                endGame();
+            }
+        }
+
+        function endGame() {
+            document.getElementById('gameContainer').style.display = 'none';
+            document.getElementById('finalScreen').style.display = 'block';
+
+            const percentage = (gameState.score / 10) * 100;
+            document.getElementById('finalScore').textContent = `${gameState.score}/10`;
+
+            let message = '';
+            if (percentage === 100) {
+                message = '🌟 Excelente! Você acertou todas as fases!';
+            } else if (percentage >= 80) {
+                message = '🎉 Muito bom! Você tem um ótimo entendimento sobre velocidade!';
+            } else if (percentage >= 60) {
+                message = '👍 Bom trabalho! Continue estudando para melhorar!';
+            } else if (percentage >= 40) {
+                message = '📚 Você pode melhorar! Revise os conceitos de velocidade.';
+            } else {
+                message = '💪 Não desista! Estude mais e tente novamente!';
+            }
+
+            document.getElementById('finalMessage').textContent = message;
+        }
+
+        function restartGame() {
+            document.getElementById('finalScreen').style.display = 'none';
+            document.getElementById('welcomeScreen').style.display = 'block';
+            document.getElementById('gameContainer').style.display = 'none';
+            
+            gameState.gameActive = false;
+            gameState.score = 0;
+            gameState.currentPhase = 0;
+            gameState.phaseScores = [0, 0, 0, 0, 0];
+            
+            document.getElementById('currentScore').textContent = '0';
+            document.getElementById('studentSelect').value = '';
+            document.getElementById('classInfo').style.display = 'none';
+            document.getElementById('startBtn').disabled = true;
+        }
     </script>
 </body>
 </html>
